@@ -1,0 +1,17 @@
+{
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "jasmine": true,
+    "jquery": true,
+    "es6": true
+  },
+  "ecmaFeatures": {
+    "modules": true
+  },
+  "globals": {
+    "module": true,
+    "inject": true,
+    "require": true
+  }
+}
