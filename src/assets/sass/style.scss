@@ -1,13 +1,16 @@
-//noinspection CssUnknownTarget
-@import url(http://fonts.googleapis.com/css?family=Raleway:400,700,300);
-$font-family-base: 'Raleway', sans-serif;
-
+// Import paper variables
+@import "node_modules/bootswatch/paper/variables";
 // Import bootstrap and fontawesome
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "node_modules/font-awesome/scss/font-awesome";
 
-// styles.scss
-.testing {
-  color: blue;
+// Bootstrap body padding for fixed navbar
+body {
+  margin-top: 80px;
 }
+
+// Import paper
+@import "node_modules/bootswatch/paper/bootswatch";
+
+@import "./theme";
 

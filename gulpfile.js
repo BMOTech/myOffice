@@ -2,21 +2,24 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     browserSync = require('browser-sync'),
     sourcemaps = require('gulp-sourcemaps'),
-    browserify = require('browserify'),
     source = require('vinyl-source-stream'),
-    buffer = require('vinyl-buffer');
+    buffer = require('vinyl-buffer'),
+    concat = require('gulp-concat'),
+    browserify = require('browserify');
 
-// Icons
-gulp.task('icons', function() {
+// Copy
+gulp.task('copy', function() {
     gulp.src('./node_modules/font-awesome/fonts/**.*')
         .pipe(gulp.dest('./public/fonts'));
     gulp.src('./node_modules/bootstrap-sass/assets/fonts/**/**.*')
         .pipe(gulp.dest('./public/fonts'));
+    gulp.src('./node_modules/fullcalendar/dist/fullcalendar.css')
+        .pipe(gulp.dest('./public/css'));
 });
 
 // CSS
 gulp.task('scss', function() {
-    gulp.src('./src/assets/sass/**/*.scss')
+    gulp.src('./src/assets/sass/style.scss')
         .pipe(sourcemaps.init())
         .pipe(sass()).on('error', sass.logError)
         .pipe(sourcemaps.write())
@@ -26,20 +29,29 @@ gulp.task('scss', function() {
         }))
 });
 
-// Vue
-gulp.task('vue', function() {
-    var bundleStream = browserify('./src/assets/vue/app.js').bundle()
-    bundleStream
-        .pipe(source('bundle.js'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({ loadMaps: true }))
-        .on('error', function (err) {
-            console.log(err.toString());
-            this.emit("end");
-        })
+// JavaScript
+gulp.task('js', function() {
+    gulp.src([
+            './node_modules/jquery/dist/jquery.js',
+            './node_modules/bootstrap-sass/assets/javascripts/bootstrap.js',
+            './node_modules/moment/min/moment-with-locales.js',
+            './node_modules/fullcalendar/dist/fullcalendar.js',
+            './node_modules/fullcalendar/dist/lang/de.js'])
+        .pipe(sourcemaps.init())
+        .pipe(concat('bundle.js'))
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest('./public/js'))
+        .pipe(gulp.dest('public/js'));
 });
+
+gulp.task('browserify', function() {
+    // Grabs the app.js file
+    return browserify('src/assets/js/app.js')
+    // bundles it and creates a file called main.js
+        .bundle()
+        .pipe(source('main.js'))
+        // saves it the public/js/ directory
+        .pipe(gulp.dest('public/js/'));
+})
 
 // BrowserSync
 gulp.task('browserSync', function() {
@@ -51,12 +63,12 @@ gulp.task('browserSync', function() {
 });
 
 // Rerun the task when a file changes
-gulp.task('watch', ['browserSync', 'scss', 'vue'], function(){
+gulp.task('watch', ['browserSync', 'scss', 'js'], function(){
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
-    gulp.watch('src/assets/vue/**/*.*', ['vue']);
+    gulp.watch('src/assets/js/**/*.*', ['js']);
     gulp.watch('public/*.php', browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
 
 // Default task
-gulp.task('default', ['icons', 'scss', 'vue']);
+gulp.task('default', ['scss', 'copy', 'js']);
