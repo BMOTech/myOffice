@@ -1,16 +1,6 @@
-// Import paper variables
-@import "node_modules/bootswatch/paper/variables";
 // Import bootstrap and fontawesome
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "node_modules/font-awesome/scss/font-awesome";
-
-// Bootstrap body padding for fixed navbar
-body {
-  margin-top: 80px;
-}
-
-// Import paper
-@import "node_modules/bootswatch/paper/bootswatch";
 
 @import "./theme";
 

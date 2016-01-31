@@ -38,7 +38,7 @@ gulp.task('js', function() {
             './node_modules/fullcalendar/dist/fullcalendar.js',
             './node_modules/fullcalendar/dist/lang/de.js'])
         .pipe(sourcemaps.init())
-        .pipe(concat('bundle.js'))
+        .pipe(concat('libraries.js'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('public/js'));
 });
@@ -57,7 +57,7 @@ gulp.task('browserify', function() {
 gulp.task('browserSync', function() {
     browserSync({
         proxy: {
-            target: "webtechniken.app"
+            target: "office.app"
         }
     })
 });
@@ -65,7 +65,7 @@ gulp.task('browserSync', function() {
 // Rerun the task when a file changes
 gulp.task('watch', ['browserSync', 'scss', 'js'], function(){
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
-    gulp.watch('src/assets/js/**/*.*', ['js']);
+    gulp.watch('src/assets/js/**/*.*', ['js', 'browserify']);
     gulp.watch('public/*.php', browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
