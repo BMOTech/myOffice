@@ -35,9 +35,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'cal_save':
             $title = $_POST['title'];
             $date = new DateTime($_POST['date']);
+            $text = $_POST['text'];
 
-            $event = new Event($title, $date);
+            $event = new Event(null, $title, $date, $text);
             echo json_encode($eventService->save($event));
+
+            break;
+        case 'cal_update':
+            $id = $_POST['id'];
+            $title = $_POST['title'];
+            $date = new DateTime($_POST['date']);
+            $text = $_POST['text'];
+
+            $event = new Event($id, $title, $date, $text);
+            echo json_encode($eventService->update($event));
 
             break;
         default:

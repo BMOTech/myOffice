@@ -32,11 +32,23 @@ class EventService
     public function save(Event $event)
     {
         $this->_database->query(
-            "INSERT INTO Events (title, start, userID) VALUES (:title, :start, :userID)"
+            "INSERT INTO Events (title, start, text, userID) VALUES (:title, :start, :text, :userID)"
         );
         $this->_database->bind(':title', $event->getTitle());
         $this->_database->bind(':start', $event->getStart()->format('Y-m-d H:i:s'));
+        $this->_database->bind(':text', $event->getText());
         $this->_database->bind(':userID', $this->_user->getUserID());
+        return $this->_database->execute();
+    }
+
+    public function update(Event $event)
+    {
+        $this->_database->query(
+            "UPDATE Events SET title = :title, text = :text WHERE id = :eventID"
+        );
+        $this->_database->bind(':title', $event->getTitle());
+        $this->_database->bind(':eventID', $event->getId());
+        $this->_database->bind(':text', $event->getText());
         return $this->_database->execute();
     }
 }

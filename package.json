@@ -23,6 +23,7 @@
   "private": true,
   "dependencies": {
     "bootstrap-sass": "^3.3.6",
+    "bootswatch": "^3.3.6",
     "font-awesome": "^4.5.0",
     "fullcalendar": "^2.6.0",
     "jquery": "^2.2.0",
