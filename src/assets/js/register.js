@@ -1,6 +1,5 @@
 'use strict';
 
-window.$ = window.jQuery = require('jquery');
 require('jquery-validation');
 require('./validator/bootstrap-defaults');
 
@@ -11,14 +10,26 @@ $(document).ready(function() {
 $('#registerForm').validate({
     debug: true,
     rules: {
+        vorname: {
+            required: true
+        },
+        nachname: {
+            required: true
+        },
+        geschlecht: {
+            required: true
+        },
         password: {
             required: true
+        },
+        password2: {
+            equalTo: "#password"
         },
         email: {
             required: true,
             email: true,
             remote: {
-                url: "ajax.php",
+                url: "register.php",
                 type: "post",
                 data: {
                     method: 'emailAvailable',
@@ -27,6 +38,9 @@ $('#registerForm').validate({
                     }
                 }
             }
+        },
+        land: {
+            required: true
         }
     },
     messages: {

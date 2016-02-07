@@ -66,7 +66,7 @@ gulp.task('browserSync', function() {
 gulp.task('watch', ['browserSync', 'scss', 'js'], function(){
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
     gulp.watch('src/assets/js/**/*.*', ['js', 'browserify']);
-    gulp.watch('public/*.php', browserSync.reload);
+    gulp.watch(['public/*.php','public/templates/*.html', 'app/**/*.php'], browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
 

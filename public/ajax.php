@@ -1,30 +1,48 @@
 <?php
 
-use Database\Database;
-use Office\UserService\UserService;
+/**
+ * Zentrale Anlaufstelle für alle internen Ajax Calls.
+ *
+ * Das Skript darf nur von eingeloggten Benutzern aufgerufen werden, deshalb
+ * wird zunächst geprüft, ob der Benutzer überhaupt authentifiziert ist.
+ *
+ */
 
-require_once(__DIR__.'/User/Auth.php');
-require_once(__DIR__.'/Database/Database.php');
-require_once(__DIR__.'/User/UserService.php');
+use App\Models\Event;
+use App\Service\EventService;
 
-$database = new Database('localhost', 'root', 'root', 'scotchbox');
-$userService = new UserService($database);
+define('ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+define('APP', ROOT . 'app' . DIRECTORY_SEPARATOR);
+
+require APP . 'app.php';
+require APP.'Services/EventService.php';
+
+$userAuthService->isAuthenticated();
+
+$user = $userService->findByEmail($_SESSION['user']);
+$eventService = new EventService($database, $user);
+
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['method']) || !$method = $_POST['method']) {
         exit;
     }
-    // TODO: auslagern wegen auth
     switch ($method) {
-        case 'emailAvailable':
-            $email = $_POST['email'];
-            if ($userService->findByEmail($email) == false) {
-                echo 'true';
-            } else {
-                echo 'false';
-            }
-        case 'authTest':
-            echo 'Authed!';
+        case 'cal_fetch':
+            echo json_encode($eventService->all());
+            break;
+        case 'cal_save':
+            $title = $_POST['title'];
+            $date = new DateTime($_POST['date']);
+
+            $event = new Event($title, $date);
+            echo json_encode($eventService->save($event));
+
+            break;
+        default:
+            http_response_code(404);
+            break;
     }
 }
 ?>

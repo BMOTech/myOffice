@@ -83,9 +83,9 @@ class Database
         $this->execute();
 
         if (isset($class) && is_string($class)) {
-            return $this->preparedQuery->fetch(
-                PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $class
-            );
+            $this->preparedQuery->setFetchMode(
+                PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $class);
+            return $this->preparedQuery->fetch();
         } else {
             return $this->preparedQuery->fetch(PDO::FETCH_ASSOC);
         }
