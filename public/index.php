@@ -20,22 +20,20 @@ if (isset($_SESSION['login'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $loginData = array();
 
-    // TODO: Validation und prüfen, ob User bereits vorhanden.
-    //array_push($error, 'Fehler!');
+    $validUser = $validator->validateLogin($loginData);
 
-    if (count($error) === 0) {
-        if($userAuthService->authenticate($email, $password)) {
+    if ($validUser) {
+        if ($userAuthService->authenticate($loginData['email'], $loginData['password'])) {
             UserService::redirect('intern.php');
             exit;
         } else {
-            array_push($error, 'Fehler bei der Anmeldung!');
+            $validator->setErrors('Fehler bei der Anmeldung!');
         }
     }
 }
 
 $data['title'] = 'Login';
-$layout->show('login', $error, $data);
+$layout->show('login', $validator->getErrors(), $data);
 ?>

@@ -22,10 +22,10 @@ if (isset($_SESSION['login'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['method'])) {
-        $method = $_POST['method'];
+        $method = filter_input(INPUT_POST, 'method', FILTER_SANITIZE_STRING);
 
         if ($method === 'emailAvailable') {
-            $email = $_POST['email'];
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             if ($userService->findByEmail($email) == false) {
                 echo 'true';
                 exit;
@@ -35,35 +35,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } else {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $password2 = $_POST['password2'];
-        $vorname = $_POST['vorname'];
-        $nachname = $_POST['nachname'];
-        $geschlecht = $_POST['geschlecht'];
-        $land = $_POST['land'];
+        $regData = array();
 
-        //TODO: Validation
+        $validUser = $validator->validateRegistration($regData);
 
-        $user = new User(
-            $email, $password, $vorname, $nachname, $geschlecht, $land
-        );
+        if ($validUser) {
+            $user = new User(
+                $regData['email'], $regData['password'], $regData['vorname'],
+                $regData['nachname'], $regData['geschlecht'], $regData['land']
+            );
 
-        try {
-            $userService->save($user);
-            if ($userAuthService->authenticate($email, $password)) {
-                UserService::redirect('intern.php');
-                exit;
-            } else {
-                array_push($error, 'Fehler bei der Anmeldung!');
+            try {
+                $userService->save($user);
+                if ($userAuthService->authenticate(
+                    $regData['email'], $regData['password']
+                )
+                ) {
+                    UserService::redirect('intern.php');
+                    exit;
+                } else {
+                    $validator->setErrors('Fehler bei der Anmeldung');
+                }
+            } catch (Exception $e) {
+                $validator->setErrors($e->getMessage());
             }
-        } catch (Exception $e) {
-            array_push($error, $e->getMessage());
         }
     }
 }
 
 $data['title'] = "Registrierung";
-$layout->show('register', $error, $data);
+$layout->show('register', $validator->getErrors(), $data);
 ?>
 

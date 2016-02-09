@@ -1,13 +1,6 @@
 <div class="container">
     <div class="col-md-6 col-md-offset-3">
-        <?php if (count($errors) > 0): ?>
-            <div class="alert alert-danger" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign"
-                      aria-hidden="true"></span>
-                <?php foreach ($errors as $err)
-                    echo $err ?>
-            </div>
-        <?php endif; ?>
+        <?php include APP.'/layout/sections/Error.php' ?>
         <form id="registerForm" action="register.php"
               class="form-horizontal" method="post">
             <fieldset>
@@ -17,7 +10,8 @@
 
                 <!-- Text input-->
                 <div class="form-group">
-                    <label class="col-md-4 control-label" for="vorname">Vorname</label>
+                    <label class="col-md-4 control-label"
+                           for="vorname">Vorname</label>
                     <div class="col-md-4">
                         <input id="vorname" name="vorname" type="text"
                                placeholder="Vorname"

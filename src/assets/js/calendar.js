@@ -16,11 +16,12 @@ $('#link_calendar').click(function() {
                     required: true
                 }
             },
-            submitHandler: function(form) {
-                var jqxhr = $.post('ajax.php', $('#createEventForm').serialize())
+            submitHandler: function() {
+                $.post('ajax.php', $('#createEventForm').serialize())
                     .done(function() {
                         $('#calendar').fullCalendar('refetchEvents');
                         $('#createEventModal').modal('hide');
+                        resetForm();
                     })
                     .fail(function() {
                         alert("Fehler beim speichern des Kalendereintrags!");
@@ -35,8 +36,8 @@ $('#link_calendar').click(function() {
                     required: true
                 }
             },
-            submitHandler: function(form) {
-                var jqxhr = $.post('ajax.php', $('#editEventForm').serialize())
+            submitHandler: function() {
+                $.post('ajax.php', $('#editEventForm').serialize())
                     .done(function() {
                         $('#calendar').fullCalendar('refetchEvents');
                         $('#editEventModal').modal('hide');
@@ -46,6 +47,26 @@ $('#link_calendar').click(function() {
                     })
             }
         });
+
+        $('#editEventModal [name="delete"]').click(function() {
+            var id = $('#editEventModal [name="id"]').val();
+
+            $.post('ajax.php', {
+                    method: 'cal_delete',
+                    id: id
+                })
+                .done(function() {
+                    $('#calendar').fullCalendar('refetchEvents');
+                    $('#editEventModal').modal('hide');
+                })
+                .fail(function() {
+                    alert("Fehler beim löschen des Kalendereintrags!");
+                })
+        });
+
+        var resetForm = function() {
+            $('#createEventForm').find("input[type=text], textarea").val("");
+        }
 
         $('#calendar').fullCalendar({
             editable: true,

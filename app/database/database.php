@@ -36,6 +36,10 @@ class Database
         }
     }
 
+    public function quote($string) {
+        return $this->connection->quote($string);
+    }
+
     public function execute()
     {
         return $this->preparedQuery->execute();

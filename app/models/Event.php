@@ -3,18 +3,17 @@ namespace App\Models;
 
 class Event
 {
-    protected $eventID;
+    protected $id;
     protected $title;
     protected $start;
-    protected $end;
-    protected $allday;
+    protected $text;
 
-    public function __construct($title = null, $start = null, $end = null, $allday = null)
+    public function __construct($id, $title, $start, $text)
     {
+        $this->id = $id;
         $this->title = $title;
-        $this->start = $start;
-        $this->end = $end;
-        $this->allday = $allday;
+        $this->start = new \DateTime($start);
+        $this->text = $text;
     }
 
     /**
@@ -31,6 +30,22 @@ class Event
     public function getStart()
     {
         return $this->start;
+    }
+
+    /**
+     * @return null
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
 }

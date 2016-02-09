@@ -17,7 +17,7 @@ $userAuthService->isAuthenticated();
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['action'])) {
 
-        $action = $_GET['action'];
+        $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
         switch ($action) {
             case 'logout':
                 $userAuthService->logout();
@@ -26,5 +26,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 $data['title'] = "Interner Bereich";
-$layout->show('intern', $error, $data);
+$layout->show('intern', $validator->getErrors(), $data);
 ?>

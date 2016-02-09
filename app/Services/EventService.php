@@ -4,7 +4,6 @@ namespace App\Service;
 use App\Models\Event;
 use App\Models\User;
 use Database\Database;
-use Exception;
 
 class EventService
 {
@@ -49,6 +48,16 @@ class EventService
         $this->_database->bind(':title', $event->getTitle());
         $this->_database->bind(':eventID', $event->getId());
         $this->_database->bind(':text', $event->getText());
+        return $this->_database->execute();
+    }
+
+    public function delete($eventID)
+    {
+        $this->_database->query(
+            "DELETE FROM Events WHERE id = :eventID AND userID = :userID"
+        );
+        $this->_database->bind(':eventID', $eventID);
+        $this->_database->bind(':userID', $this->_user->getUserID());
         return $this->_database->execute();
     }
 }

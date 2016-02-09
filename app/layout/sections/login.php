@@ -1,13 +1,6 @@
 <div class="container">
     <div class="col-md-6 col-md-offset-3">
-        <?php if (count($errors) > 0): ?>
-            <div class="alert alert-danger" role="alert">
-                <span class="glyphicon glyphicon-exclamation-sign"
-                      aria-hidden="true"></span>
-                <?php foreach ($errors as $err)
-                echo $err ?>
-            </div>
-        <?php endif; ?>
+        <?php include APP.'/layout/sections/Error.php' ?>
         <form id="loginForm" action="index.php" method="post" class="form-horizontal">
             <fieldset>
 

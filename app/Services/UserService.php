@@ -8,7 +8,7 @@ use Exception;
 class UserService
 {
     private $_database;
-    private $_userClass = "App\Models\User";
+    private $_class = "App\Models\User";
 
     public function __construct(Database $database)
     {
@@ -19,7 +19,8 @@ class UserService
     {
         if (!$this->findByEmail($user->getEmail())) {
             $this->_database->query(
-                "INSERT INTO Users (email, password, vorname, nachname, land, geschlecht) VALUES (:email, :password, :vorname, :nachname, :land, :geschlecht)"
+                "INSERT INTO Users (email, password, vorname, nachname, land, geschlecht)
+                    VALUES (:email, :password, :vorname, :nachname, :land, :geschlecht)"
             );
             $this->_database->bind(':email', $user->getEmail());
             $this->_database->bind(':password', $user->getPassword());
@@ -39,9 +40,12 @@ class UserService
     {
         if ($this->findByID($user->getUserID())) {
             $this->_database->query(
-                "UPDATE Users SET lastLogin = NOW() WHERE userID = :userID"
+                "UPDATE Users
+                    SET lastLogin = NOW()
+                    WHERE userID = :userID"
             );
             $this->_database->bind(':userID', $user->getUserID());
+
             return $this->_database->execute();
         } else {
             throw new Exception("Konnte keinen Benutzer finden!");
@@ -51,13 +55,15 @@ class UserService
     public function getUserByCredentials($email, $password)
     {
         $this->_database->query(
-            "SELECT * FROM Users WHERE email = :email AND password = :password"
+            "SELECT *
+                FROM Users
+                WHERE email = :email AND password = :password"
         );
         $this->_database->bind(':email', $email);
         $this->_database->bind(':password', $password);
         $this->_database->execute();
 
-        return $this->_database->single($this->_userClass);
+        return $this->_database->single($this->_class);
     }
 
     public function findByEmail($email)
@@ -68,7 +74,7 @@ class UserService
         $this->_database->bind(':email', $email);
         $this->_database->execute();
 
-        return $this->_database->single($this->_userClass);
+        return $this->_database->single($this->_class);
     }
 
     public function findByID($uid)
@@ -79,7 +85,7 @@ class UserService
         $this->_database->bind(':uid', $uid);
         $this->_database->execute();
 
-        return $this->_database->single($this->_userClass);
+        return $this->_database->single($this->_class);
     }
 
     public function all()
@@ -89,7 +95,7 @@ class UserService
         );
         $this->_database->execute();
 
-        return $this->_database->resultset($this->_userClass);
+        return $this->_database->resultset($this->_class);
     }
 
     public static function redirect($url)
