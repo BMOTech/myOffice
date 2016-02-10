@@ -29,14 +29,25 @@ class TimerService
         return $this->_database->resultset();
     }
 
-    public function save(Timer $timer, Task $task)
+    public function stopTimer($taskID, $timerID)
     {
         $this->_database->query(
-            "INSERT INTO Timers (start, end, taskID) VALUES (:start, :end, :taskID)"
+            "UPDATE Timers SET end = NOW() WHERE taskID = :taskID AND timerID = :timerID "
         );
-        $this->_database->bind(':start', $timer->getStart());
-        $this->_database->bind(':end', $timer->getEnd());
-        $this->_database->bind(':taskID', $task->getTaskID());
+        $this->_database->bind(':taskID', $taskID);
+        $this->_database->bind(':timerID', $timerID);
+
         return $this->_database->execute();
+    }
+
+    public function startTimer($taskID)
+    {
+        $this->_database->query(
+            "INSERT INTO Timers (start, taskID) VALUES (NOW(), :taskID)"
+        );
+        $this->_database->bind(':taskID', $taskID);
+
+        $this->_database->execute();
+        return $this->_database->lastInsertId();
     }
 }

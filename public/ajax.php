@@ -165,6 +165,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'task_fetch':
             echo json_encode($taskService->all());
             break;
+        case 'timer_start':
+            $data = array();
+            $validID = $validator->validID($data);
+            if ($validID) {
+                $id = $data['id'];
+                echo json_encode(array("timerID" => $timerService->startTimer($id)));
+            } else {
+                showError($data);
+            }
+            break;
+        case 'timer_stop':
+            $data = array();
+            $validID = $validator->stopTimer($data);
+            if ($validID) {
+                echo json_encode($timerService->stopTimer($data['taskID'], $data['timerID']));
+            } else {
+                showError($data);
+            }
+            break;
         default:
             http_response_code(404);
             break;

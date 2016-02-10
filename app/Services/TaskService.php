@@ -20,7 +20,7 @@ class TaskService
     public function all()
     {
         $this->_database->query(
-            "SELECT * FROM Tasks ta JOIN Timers ti ON ta.taskID = ti.taskID WHERE userID = :userID"
+            "SELECT ta.taskID, ta.description, ta.userID, ti.timerID, ti.start, ti.end FROM (SELECT * FROM Tasks WHERE userID = :userID) as ta LEFT JOIN Timers ti ON ta.taskID = ti.taskID;"
         );
         $this->_database->bind(':userID', $this->_user->getUserID());
         $this->_database->execute();
@@ -44,7 +44,8 @@ class TaskService
                 $currentItem['timers'] = array();
             }
             $currentItem['timers'][] = array("start" => $task['start'],
-                                             "end"   => $task['end']);
+                                             "end"   => $task['end'],
+                                             "timerID" => $task['timerID']);
         }
 
         return json_encode($output);

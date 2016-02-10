@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 $.ajaxSetup({
     cache: false
 });
@@ -6,33 +8,26 @@ $('#link_tasks').click(function() {
 
     $('#content').load('templates/aufgaben.html', function() {
 
-        $('#tasks').on('click', "button[name='timer']", function() {
-            var $this = $(this);
-            toggleWatch($this);
-        });
 
-        function displayTime(watch) {
-            var time = moment(this.text(), 'HH : mm : ss');
-            this.text(time.add(1, 's').format('HH : mm : ss'));
-        }
-
-        function toggleWatch(watch) {
-            var id = watch.closest('div').data('id');
-            if (watch.run === false) {
-                var myTimer = setInterval(displayTime.bind(watch), 1000);
-                watch[run] = true;
-            } else {
-                clearInterval(myTimer);
-            }
-        }
 
         function getTimers(tasks) {
-            var timers = "<ul>";
-            $.each(tasks.timers, function(key, value) {
-                timers = timers.concat("<li>" + value.start + " - " + value.end + "</li>");
-            });
-            timers = timers.concat("</ul>")
-            return timers;
+            var output = "";
+            if (tasks.timers.length === 1 && tasks.timers[0].start === null) {
+                output = "<p>Noch keine Details vorhanden!</p>";
+            } else {
+                output = output.concat('<ul class="list-group">');
+                $.each(tasks.timers, function(key, value) {
+                    if (!value.end) {
+
+                        output = output.concat('<li data-id="' + value.timerID + '" class="list-group-item">An der Aufgabe gearbeitet am: ' + moment(value.start, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY") + ' - Noch nicht beendet!');
+                    } else {
+                        var diff = moment.utc(moment(value.end, "YYYY-MM-DD HH:mm:ss").diff(moment(value.start, "YYYY-MM-DD HH:mm:ss"))).format("HH:mm:ss")
+                        output = output.concat('<li data-id="' + value.timerID + '" class="list-group-item">An der Aufgabe gearbeitet am: ' + moment(value.start, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY") + ' - Dauer: ' + diff + '</li>');
+                    }
+                });
+                output = output.concat("</ul>")
+            }
+            return output;
         }
 
         function showTasks(tasks) {
@@ -42,14 +37,14 @@ $('#link_tasks').click(function() {
                     '<div id="taskDetails">' + getTimers(value) + '</div>' +
                     '<div data-id="' + value.taskID + '"><span class="pull-left">' +
                     '<button name="timer" class="btn btn-default btn-xs">00 : 00 : 00</></span></button></span>' +
-                    '<span class="pull-right"><button onClick="editTask(1)" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>' +
-                    '<button onClick="deleteTask(1)" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>' +
+                    '<span class="pull-right"><button name="editTask" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>' +
+                    '<button name="deleteTask" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>' +
                     '</span></div></li>';
                 $("#tasks").append(task);
             });
         }
 
-        function fetchTasks() {
+        var fetchTasks = function() {
             $("#tasks").empty();
             $.post('ajax.php', {
                     method: 'task_fetch'
@@ -61,8 +56,8 @@ $('#link_tasks').click(function() {
                     alert("Fehler beim laden der Aufgaben!");
                 })
         }
+        window.fetchTasks = fetchTasks;
 
-        $("#tasks").empty();
         fetchTasks();
     })
 });

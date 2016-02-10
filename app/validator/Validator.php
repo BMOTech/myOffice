@@ -159,4 +159,13 @@ class Validator
 
         return $this->checkForErrors($arr);
     }
+
+
+    public function stopTimer(&$arr)
+    {
+        $this->checkInt("taskID");
+        $this->checkInt("timerID");
+
+        return $this->checkForErrors($arr);
+    }
 }
