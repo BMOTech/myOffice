@@ -14,6 +14,9 @@ $('#link_calendar').click(function() {
             rules: {
                 title: {
                     required: true
+                },
+                text: {
+                    required: true
                 }
             },
             submitHandler: function() {

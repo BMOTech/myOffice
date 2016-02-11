@@ -99,7 +99,7 @@ class Validator
             $this->_errors[$string]
                 = ucfirst($string).' ungültig!';
         }
-        if (($this->_data[$string] != filter_input(INPUT_POST, $string))) {
+        if ((($this->_data[$string] != filter_input(INPUT_POST, $string)))) {
             $this->_errors[$string]
                 = ucfirst($string).' ungültig!';
         }
@@ -165,6 +165,13 @@ class Validator
     {
         $this->checkInt("taskID");
         $this->checkInt("timerID");
+
+        return $this->checkForErrors($arr);
+    }
+
+    public function saveTask(&$arr)
+    {
+        $this->checkString("description");
 
         return $this->checkForErrors($arr);
     }

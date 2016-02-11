@@ -8,5 +8,5 @@ require('./login');
 require('./register');
 require('./calendar');
 require('./contacts');
-require('./task.js');
+require('./Task.js');
 

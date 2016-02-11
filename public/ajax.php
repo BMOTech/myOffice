@@ -10,6 +10,7 @@
 
 use App\Models\Contact;
 use App\Models\Event;
+use App\Models\Task;
 use App\Service\ContactService;
 use App\Service\EventService;
 use App\Service\TaskService;
@@ -164,6 +165,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
         case 'task_fetch':
             echo json_encode($taskService->all());
+            break;
+        case 'task_save':
+            $data = array();
+            $validID = $validator->saveTask($data);
+            if ($validID) {
+                $task = new Task(
+                    null, $data['description']
+                );
+                if ($taskService->save($task)) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim speichern.");
+                }
+            } else {
+                showError($data);
+            }
+            break;
+        case 'task_delete':
+            $data = array();
+            $validID = $validator->validID($data);
+            if ($validID) {
+                $id = $data['id'];
+                if ($taskService->delete($id)) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim löschen.");
+                }
+            } else {
+                showError($data);
+            }
             break;
         case 'timer_start':
             $data = array();
