@@ -4,8 +4,9 @@ namespace App\Service;
 use App\Models\Event;
 use App\Models\User;
 use Database\Database;
+use Service;
 
-class EventService
+class EventService implements Service
 {
     private $_database;
     private $_user;

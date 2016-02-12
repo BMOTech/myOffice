@@ -15,6 +15,8 @@ use App\Service\ContactService;
 use App\Service\EventService;
 use App\Service\TaskService;
 use App\Service\TimerService;
+use Validator\AjaxService;
+use Validator\CalendarValidator;
 
 define('ROOT', dirname(__DIR__).DIRECTORY_SEPARATOR);
 define('APP', ROOT.'app'.DIRECTORY_SEPARATOR);
@@ -35,18 +37,6 @@ $timerService = new TimerService($database, $user);
 
 header('Content-Type: application/json');
 
-/**
- * @param $data
- */
-function showError($data)
-{
-    header('HTTP/1.1 500 Internal Server Booboo');
-    header('Content-Type: application/json; charset=UTF-8');
-    die(json_encode(
-        array('message' => 'error', 'errors' => json_encode($data))
-    ));
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!isset($_POST['method']) || !$method = $_POST['method']) {
         exit;
@@ -56,20 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode($eventService->all());
             break;
         case 'cal_save':
-            $data = array();
-            $validID = $validator->saveEvent($data);
-            if ($validID) {
-                $event = new Event(
-                    null, $data['title'], $data['date'], $data['text']
-                );
-                if ($eventService->save($event)) {
-                    echo json_encode(array("message" => "success"));
-                } else {
-                    showError("Unbekannter Fehler beim speichern.");
-                }
-            } else {
-                showError($data);
-            }
+            $calendar = new AjaxService(new CalendarValidator(), $eventService);
+            $calendar->saveMe();
             break;
         case 'cal_update':
             $data = array();

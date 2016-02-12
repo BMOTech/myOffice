@@ -1,111 +1,33 @@
 <?php
 namespace Validator;
 
+use App\Models\Event;
 use DateTime;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Exception;
+use Service;
 
-class Validator
+interface Validator
 {
-    private $_errors = array();
-    private $_data = array();
+    function save(&$data);
+}
 
-    public function validateRegistration(&$arr)
+abstract class newValidator
+{
+    protected $_errors = array();
+    protected $_data = array();
+
+    public function validateID()
     {
-        $this->checkEmail();
-        $this->checkString("password");
-        $this->checkString("password2");
-        $this->checkString("vorname");
-        $this->checkString("nachname");
-        $this->checkString("geschlecht");
-        $this->checkString("land");
-
-        if ($this->_data['password'] !== $this->_data['password2']) {
-            $this->_errors['samePassword']
-                = 'Bitte geben Sie zwei identische Kennwörter ein!';
-        }
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function saveContact(&$arr)
-    {
-        $this->checkString("vorname");
-        $this->checkString("nachname");
-        $this->checkString("firma");
-        $this->checkEmail();
-        $this->checkString("telefon");
-        $this->checkString("notizen");
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function updateContact(&$arr)
-    {
-        $this->checkInt("id");
-        $this->checkString("vorname");
-        $this->checkString("nachname");
-        $this->checkString("firma");
-        $this->checkEmail();
-        $this->checkString("telefon");
-        $this->checkString("notizen");
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function validateLogin(&$arr)
-    {
-        $this->checkEmail();
-        $this->checkString("password");
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function saveEvent(&$arr)
-    {
-        $this->checkString("title");
-        $this->checkString("text");
-        $this->checkDate("date");
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function updateEvent(&$arr)
-    {
-        $this->checkInt("id");
-        $this->checkString("title");
-        $this->checkString("text");
-        $this->checkDate("date");
-
-        return $this->checkForErrors($arr);
-    }
-
-    private function checkEmail()
-    {
-        if (!($this->_data['email'] = filter_input(
-            INPUT_POST, 'email', FILTER_VALIDATE_EMAIL
+        if (!($this->_data['id'] = filter_input(
+            INPUT_POST, 'id', FILTER_VALIDATE_INT
         ))
         ) {
-            $this->_errors['email']
-                = 'Bitte geben Sie eine gültige Email-Adresse ein!';
+            $this->_errors['id']
+                = 'Keine gültige Zahl übergeben!';
         }
     }
 
-    private function checkString($string)
-    {
-        if (!($this->_data[$string] = filter_input(
-            INPUT_POST, $string, FILTER_SANITIZE_STRING
-        ))
-        ) {
-            $this->_errors[$string]
-                = ucfirst($string).' ungültig!';
-        }
-        if ((($this->_data[$string] != filter_input(INPUT_POST, $string)))) {
-            $this->_errors[$string]
-                = ucfirst($string).' ungültig!';
-        }
-    }
-
-    private function checkForErrors(&$arr)
+    protected function checkForErrors(&$arr)
     {
         if (!empty($this->_errors)) {
             $arr = $this->_errors;
@@ -120,18 +42,22 @@ class Validator
         return true;
     }
 
-    public function getErrors()
+    protected function checkString($string)
     {
-        return $this->_errors;
+        if (!($this->_data[$string] = filter_input(
+            INPUT_POST, $string, FILTER_SANITIZE_STRING
+        ))
+        ) {
+            $this->_errors[$string]
+                = ucfirst($string) . ' ungültig!';
+        }
+        if ((($this->_data[$string] != filter_input(INPUT_POST, $string)))) {
+            $this->_errors[$string]
+                = ucfirst($string) . ' ungültig!';
+        }
     }
 
-    public function setErrors($errMsg)
-    {
-        $this->_errors['Allgemeiner Fehler']
-            = $errMsg;
-    }
-
-    private function checkDate($field)
+    protected function checkDate($field)
     {
         $date = filter_input(INPUT_POST, $field);
         try {
@@ -142,37 +68,58 @@ class Validator
         }
     }
 
-    private function checkInt($string)
+}
+
+class CalendarValidator extends newValidator implements Validator
+{
+
+    public function save(&$data)
     {
-        if (!($this->_data[$string] = filter_input(
-            INPUT_POST, $string, FILTER_VALIDATE_INT
-        ))
-        ) {
-            $this->_errors[$string]
-                = 'Keine gültige Zahl übergeben!';
+        $this->checkString("title");
+        $this->checkString("text");
+        $this->checkDate("date");
+
+        if ($this->checkForErrors($data)) {
+            return new Event(null, $this->_data['title'], $this->_data['start'], $this->_data['text']);
+        } else {
+            return false;
+        }
+    }
+}
+
+class AjaxService
+{
+
+    private $service;
+    private $validator;
+
+    function __construct(Validator $validator, Service $service)
+    {
+        $this->validator = $validator;
+        $this->service = $service;
+    }
+
+    public function saveMe()
+    {
+        $data = array();
+        $model = $this->validator->save($data);
+        if ($model !== false) {
+            if ($this->service->save($model)) {
+                echo json_encode(array("message" => "success"));
+            } else {
+                $this->showError("Unbekannter Fehler beim speichern.");
+            }
+        } else {
+            $this->showError($data);
         }
     }
 
-    public function validID(&$arr)
+    private function showError($data)
     {
-        $this->checkInt("id");
-
-        return $this->checkForErrors($arr);
-    }
-
-
-    public function stopTimer(&$arr)
-    {
-        $this->checkInt("taskID");
-        $this->checkInt("timerID");
-
-        return $this->checkForErrors($arr);
-    }
-
-    public function saveTask(&$arr)
-    {
-        $this->checkString("description");
-
-        return $this->checkForErrors($arr);
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json; charset=UTF-8');
+        die(json_encode(
+            array('message' => 'error', 'errors' => json_encode($data))
+        ));
     }
 }
