@@ -1,16 +1,27 @@
 /// <reference path="definitlytyped/jquery.d.ts" />
 /// <reference path="definitlytyped/moment.d.ts" />
 
-class Task {
+import {StopWatch} from "./Stopwatch";
+
+export class Task {
+
+    public fetchTasks() {
+        $("#tasks").empty();
+        $.post("ajax.php", {
+                method: "task_fetch"
+            })
+            .done(tasks => this.displayTasks(JSON.parse(tasks)))
+            .fail(function () {
+                alert("Fehler beim laden der Aufgaben!");
+            });
+    }
 
     private displayTasks(tasks) {
-        var that = this;
-        $.each(tasks, function (key, value) {
-            var description = value.description;
-            var details = that.showDetails(value);
-            var task_id = value.taskID;
-
-            var html = `
+        $.each(tasks, (key, value) => {
+            let description = value.description;
+            let task_id = value.taskID;
+            let details = this.showDetails(value);
+            let html = `
             <li class="list-group-item clearfix task">
                 <p>${description}</p>
                 <div id="taskDetails">
@@ -27,66 +38,64 @@ class Task {
                 </div>
             </li>
             `;
-
             $("#tasks").append(html);
         });
 
-        var tasksNotFinished = $("li[data-notfinished]");
+        let tasksNotFinished = $("li[data-notfinished]");
 
-        $.each(tasksNotFinished, function (key, value) {
-            var taskID = $(this).attr('data-notfinished');
-            var watch = $("div[data-id=" + taskID + "]").find('button[name="timer"]');
-            var timerID = $(this).attr('data-id');
-            var now = moment();
-            var start = moment($(this).attr('data-start'), "X").add(120, 'm');
-            console.log(moment($(this).attr('data-start'), "X").format("HH : mm : ss"));
-            var difference = moment(now.diff(start)).format("HH : mm : ss");
+        $.each(tasksNotFinished, (key, value) => {
+            let taskID = $(value).attr("data-notfinished");
+            let watch = $("div[data-id=" + taskID + "]").find('button[name="timer"]');
+            let timerID = $(value).attr("data-id");
+            let now = moment();
+            let start = moment($(value).attr("data-start"), "X").add(120, "m");
+            let difference = moment(now.diff(start)).format("HH : mm : ss");
+
 
             if (timerID != null) {
                 watch.text(difference);
-                var stopWatch = new StopWatch(watch, that);
-                stopWatch.timerID = parseInt(timerID);
-                watch.data('myWatch', stopWatch);
-                stopWatch.restartWatch();
+                let stopWatch = new StopWatch(watch, this);
+                watch.data("myWatch", stopWatch);
+                stopWatch.restartWatch(timerID);
             }
         });
-
     }
 
     private showDetails(task) {
-        var that = this;
-        var timers = task.timers;
-        var listItems = "";
+        let timers = task.timers;
+        let listItems = "";
 
         $.each(timers, function (key, value) {
-            var timerID = value.timerID;
-            var start = value.start;
-            var end = value.end;
-            var startFormatted = moment(start, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY");
-            var startTimestamp = moment(start, "YYYY-MM-DD HH:mm:ss").format("X");
+            let timerID = value.timerID;
+            let start = value.start;
+            let end = value.end;
+            let startFormatted = moment(start, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY");
+            let startTimestamp = moment(start, "YYYY-MM-DD HH:mm:ss").format("X");
 
-            var difference = moment.utc(moment(end, "YYYY-MM-DD HH:mm:ss").diff(moment(start, "YYYY-MM-DD HH:mm:ss"))).format("HH:mm:ss");
-            var notFinished = "";
-            var dataStart = "";
-            var lastStr = "";
+            let difference = moment.utc(moment(end, "YYYY-MM-DD HH:mm:ss").diff(moment(start, "YYYY-MM-DD HH:mm:ss"))).format("HH:mm:ss");
+            let notFinished = "";
+            let dataStart = "";
+            let lastStr = "";
 
-            if(start) {
+            if (start) {
                 if (!end) {
                     lastStr = "Noch nicht beendet!";
                     notFinished = 'data-notfinished="' + task.taskID + '"';
                     dataStart = 'data-start="' + startTimestamp + '"';
                 } else {
-                    lastStr = "Dauer: " + difference;
+                    lastStr = difference;
                 }
-                var listItem = `
-                    <li data-id="${timerID}" ${notFinished} ${dataStart} class="list-group-item">An der Aufgabe gearbeitet am: ${startFormatted} - ${lastStr}</li>
+                let listItem = `
+                    <li data-id="${timerID}" ${notFinished} ${dataStart} class="list-group-item">
+                    ${startFormatted}: <i>${lastStr}</i> an der Aufgabe gearbeitet.
+                    </li>
                 `;
 
-            listItems += listItem;
+                listItems += listItem;
             }
         });
 
-        var html = `
+        let html = `
                 <ul class="list-group">
                     ${listItems}
                 </ul>
@@ -94,99 +103,58 @@ class Task {
 
         return html;
     }
-
-    fetchTasks() {
-        $("#tasks").empty();
-        var that = this;
-        $.post('ajax.php', {
-                method: 'task_fetch'
-            })
-            .done(tasks => that.displayTasks(JSON.parse(tasks)))
-            .fail(function () {
-                alert("Fehler beim laden der Aufgaben!");
-            })
-    }
-}
-
-class StopWatch {
-
-    taskID:number;
-    interval:any;
-    watch:JQuery;
-    currentTime:any;
-    timerID:number;
-    task:Task;
-
-    constructor(watch, task) {
-        this.currentTime = watch.text();
-        this.watch = watch;
-        this.taskID = watch.closest('div').data('id');
-        this.task = task;
-    }
-
-    startWatch() {
-        var that = this;
-        $.post('ajax.php', {
-                id: this.taskID,
-                method: 'timer_start'
-            })
-            .done(function (timer) {
-                that.timerID = timer.timerID;
-                that.interval = setInterval(() => that.displayTime(), 1000);
-            })
-            .fail(function () {
-                alert("Fehler beim starten des Timers!");
-            })
-    }
-
-    restartWatch() {
-        this.interval = setInterval(() => this.displayTime(), 1000);
-    }
-
-    stopWatch() {
-        var that = this;
-        $.post('ajax.php', {
-                method: 'timer_stop',
-                taskID: that.taskID,
-                timerID: that.timerID
-            })
-            .done(function (timer) {
-                clearInterval(that.interval);
-                that.task.fetchTasks();
-            })
-            .fail(function () {
-                alert("Fehler beim stoppen des Timers!");
-            })
-    }
-
-    displayTime() {
-        var time = moment(this.currentTime, 'HH : mm : ss');
-        this.currentTime = time.add(1, 's').format('HH : mm : ss')
-        this.watch.text(this.currentTime);
-    }
-
 }
 
 
-$('#link_tasks').click(function () {
+$("#link_tasks").click(function () {
 
-    $('#content').load('templates/aufgaben.html', function () {
-        var task = new Task();
+    $("#content").load("templates/aufgaben.html", function () {
+        let task = new Task();
         task.fetchTasks();
 
-        $('#tasks').on('click', "button[name='timer']", function () {
-            var watch = $(this);
-            var watchData:StopWatch = watch.data('myWatch');
+        $("#tasks")
+            .on("click", "button[name='timer']", function () {
+                let watch = $(this);
+                let watchData: StopWatch = watch.data("myWatch");
 
-            if (watchData) {
-                watchData.stopWatch();
-                watch.data('myWatch', null);
-            } else {
-                console.log(watch);
-                var stopWatch = new StopWatch(watch, task);
-                watch.data('myWatch', stopWatch);
-                stopWatch.startWatch();
-            }
-        });
+                if (watchData) {
+                    watchData.stopWatch();
+                    watch.data("myWatch", null);
+                } else {
+                    console.log(watch);
+                    let stopWatch = new StopWatch(watch, task);
+                    watch.data("myWatch", stopWatch);
+                    stopWatch.startWatch();
+                }
+            })
+            .on("click", "button[name='deleteTask']", function () {
+                let taskID = $(this).closest("div").data("id");
+                $.post("ajax.php", {
+                        id: taskID,
+                        method: "task_delete",
+                    })
+                    .done(function () {
+                        task.fetchTasks();
+                    })
+                    .fail(function () {
+                        alert("Fehler beim laden der Aufgaben!");
+                    });
+            });
+
+        $("#content")
+            .on("click", "button[name='addEvent']", function () {
+                let text = $("#taskInput").val();
+                $.post("ajax.php", {
+                        description: text,
+                        method: "task_save",
+                    })
+                    .done(function () {
+                        task.fetchTasks();
+                    })
+                    .fail(function () {
+                        alert("Fehler beim laden der Aufgaben!");
+                    });
+
+            })
     });
 });
