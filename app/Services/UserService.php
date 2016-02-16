@@ -4,8 +4,9 @@ namespace App\Service;
 use App\Models\User;
 use Database\Database;
 use Exception;
+use Service;
 
-class UserService
+class UserService implements Service
 {
     private $_database;
     private $_class = "App\Models\User";

@@ -2,6 +2,7 @@
 namespace Validator;
 
 use App\Models\Event;
+use App\Models\User;
 use DateTime;
 use Exception;
 use Service;
@@ -68,6 +69,17 @@ abstract class newValidator
         }
     }
 
+    protected function checkEmail()
+    {
+        if (!($this->_data['email'] = filter_input(
+            INPUT_POST, 'email', FILTER_VALIDATE_EMAIL
+        ))
+        ) {
+            $this->_errors['email']
+                = 'Bitte geben Sie eine gültige Email-Adresse ein!';
+        }
+    }
+
 }
 
 class CalendarValidator extends newValidator implements Validator
@@ -87,6 +99,22 @@ class CalendarValidator extends newValidator implements Validator
     }
 }
 
+
+class LoginValidator extends newValidator implements Validator
+{
+
+    public function save(&$data)
+    {
+        $this->checkEmail();
+        $this->checkString("password");
+
+        if ($this->checkForErrors($data)) {
+            return new User(null, $this->_data['id'], $this->_data['password']);
+        } else {
+            return false;
+        }
+    }
+}
 class AjaxService
 {
 

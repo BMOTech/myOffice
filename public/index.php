@@ -9,6 +9,8 @@
  */
 
 use App\Service\UserService;
+use Validator\AjaxService;
+use Validator\LoginValidator;
 
 define('ROOT', dirname(__DIR__).DIRECTORY_SEPARATOR);
 define('APP', ROOT.'app'.DIRECTORY_SEPARATOR);
@@ -20,9 +22,9 @@ if (isset($_SESSION['login'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $loginData = array();
 
-    $validUser = $validator->validateLogin($loginData);
+    $validUser = new AjaxService(new LoginValidator(), $userService);
+    $validUser->saveMe();
 
     if ($validUser) {
         if ($userAuthService->authenticate($loginData['email'], $loginData['password'])) {
@@ -35,5 +37,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 $data['title'] = 'Login';
-$layout->show('login', $validator->getErrors(), $data);
+$layout->show('login', null, $data);
 ?>
