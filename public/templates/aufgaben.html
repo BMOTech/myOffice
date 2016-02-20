@@ -16,3 +16,60 @@
         </ul>
     </div>
 </div>
+
+<div class="modal fade" id="editTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Aufgabe bearbeiten</h4>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="name" placeholder="Name der Aufgabe">
+                        </div>
+                    </div>
+                    <input name="id" type="hidden"/>
+                    <input name="method" type="hidden" value="task_update"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button form="editTaskForm" type="submit" class="btn btn-primary" name="save">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="stopWatchModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Notiz hinzufügen...</h4>
+            </div>
+            <div class="modal-body">
+                <form id="stopWatchForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <textarea type="text" class="form-control" name="notiz" placeholder="Notiz zum Zeitaufwand"></textarea>
+                        </div>
+                    </div>
+                    <input name="id" type="hidden"/>
+                    <input name="method" type="hidden" value="stopwatch_update_text"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-right">
+                    <button form="stopWatchForm" type="submit" class="btn btn-primary" name="save">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

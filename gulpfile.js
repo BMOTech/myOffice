@@ -71,4 +71,4 @@ gulp.task('watch', ['browserSync', 'scss', 'js'], function(){
 });
 
 // Default task
-gulp.task('default', ['scss', 'copy', 'js']);
+gulp.task('default', ['scss', 'copy', 'js', 'browserify']);

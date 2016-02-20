@@ -50,4 +50,15 @@ class TimerService
         $this->_database->execute();
         return $this->_database->lastInsertId();
     }
+
+    public function updateTextTimer($timerID, $notiz)
+    {
+        $this->_database->query(
+            "UPDATE Timers SET notiz = :notiz WHERE timerID = :timerID "
+        );
+        $this->_database->bind(':notiz', $notiz);
+        $this->_database->bind(':timerID', $timerID);
+
+        return $this->_database->execute();
+    }
 }

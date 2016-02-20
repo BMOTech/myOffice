@@ -6,7 +6,6 @@ import {StopWatch} from "./Stopwatch";
 export class Task {
 
     public fetchTasks() {
-        $("#tasks").empty();
         $.post("ajax.php", {
                 method: "task_fetch"
             })
@@ -17,6 +16,7 @@ export class Task {
     }
 
     private displayTasks(tasks) {
+        $("#tasks").empty();
         $.each(tasks, (key, value) => {
             let description = value.description;
             let task_id = value.taskID;
@@ -24,7 +24,7 @@ export class Task {
             let html = `
             <li class="list-group-item clearfix task">
                 <p>${description}</p>
-                <div id="taskDetails">
+                <div class="taskDetails">
                     <p>${details}</p>
                 </div>
                 <div data-id="${task_id}">
@@ -32,13 +32,21 @@ export class Task {
                         <button name="timer" class="btn btn-default btn-xs">00 : 00 : 00</button>
                     </span>
                     <span class="pull-right">
-                        <button name="editTask" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>
-                        <button name="deleteTask" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></button>
+                        <button name="showDetails" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-zoom-in"></span>
+                        </button>
+                        <button name="editTask" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button name="deleteTask" class="btn btn-danger btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
                     </span>
                 </div>
             </li>
             `;
             $("#tasks").append(html);
+            $(".taskDetails").hide();
         });
 
         let tasksNotFinished = $("li[data-notfinished]");
@@ -48,7 +56,7 @@ export class Task {
             let watch = $("div[data-id=" + taskID + "]").find('button[name="timer"]');
             let timerID = $(value).attr("data-id");
             let now = moment();
-            let start = moment($(value).attr("data-start"), "X").add(120, "m");
+            let start = moment($(value).attr("data-start"), "X").add(60, "m");
             let difference = moment(now.diff(start)).format("HH : mm : ss");
 
 
@@ -69,13 +77,19 @@ export class Task {
             let timerID = value.timerID;
             let start = value.start;
             let end = value.end;
+            let notiz = value.notiz;
             let startFormatted = moment(start, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY");
             let startTimestamp = moment(start, "YYYY-MM-DD HH:mm:ss").format("X");
-
-            let difference = moment.utc(moment(end, "YYYY-MM-DD HH:mm:ss").diff(moment(start, "YYYY-MM-DD HH:mm:ss"))).format("HH:mm:ss");
+            let difference = moment.utc(moment(end).diff(moment(start))).format("HH:mm:ss");
             let notFinished = "";
             let dataStart = "";
             let lastStr = "";
+
+            if (!notiz) {
+                notiz = "";
+            } else {
+                notiz = "<br>Notiz: " + notiz;
+            }
 
             if (start) {
                 if (!end) {
@@ -87,7 +101,7 @@ export class Task {
                 }
                 let listItem = `
                     <li data-id="${timerID}" ${notFinished} ${dataStart} class="list-group-item">
-                    ${startFormatted}: <i>${lastStr}</i> an der Aufgabe gearbeitet.
+                    ${startFormatted}: <i>${lastStr}</i> an der Aufgabe gearbeitet. ${notiz}
                     </li>
                 `;
 
@@ -139,7 +153,37 @@ $("#link_tasks").click(function () {
                     .fail(function () {
                         alert("Fehler beim laden der Aufgaben!");
                     });
+            })
+            .on("click", "button[name='showDetails']", function () {
+                $(this).closest("li").find('.taskDetails').toggle();
+
+            })
+            .on("click", "button[name='editTask']", function () {
+                let taskID = $(this).closest("div").data("id");
+                let taskname = $(this).closest("li").find("p").text().trim();
+                $('#editTaskModal [name="name"]').val(taskname);
+                $('#editTaskModal [name="id"]').val(taskID);
+                $("#editTaskModal").modal("show");
             });
+
+        $("#editTaskForm").validate({
+            debug: true,
+            rules: {
+                name: {
+                    required: true
+                },
+            },
+            submitHandler: function () {
+                $.post("ajax.php", $("#editTaskForm").serialize())
+                    .done(function () {
+                        task.fetchTasks();
+                        $("#editTaskModal").modal("hide");
+                    })
+                    .fail(function () {
+                        alert("Fehler beim speichern der Aufgabe!");
+                    });
+            },
+        });
 
         $("#content")
             .on("click", "button[name='addEvent']", function () {
@@ -155,6 +199,29 @@ $("#link_tasks").click(function () {
                         alert("Fehler beim laden der Aufgaben!");
                     });
 
-            })
+            });
+
+        $("#stopWatchForm").validate({
+            debug: true,
+            rules: {
+                notiz: {
+                    required: false
+                },
+            },
+            submitHandler: function () {
+                $.post("ajax.php", $("#stopWatchForm").serialize())
+                    .done(function () {
+                        task.fetchTasks();
+                        $("#stopWatchModal").modal("hide");
+                    })
+                    .fail(function () {
+                        alert("Fehler beim speichern der Notiz!");
+                    });
+            },
+        });
+
+        $('#stopWatchModal').on('hidden.bs.modal', function () {
+            task.fetchTasks();
+        });
     });
 });

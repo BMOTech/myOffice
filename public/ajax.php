@@ -13,6 +13,7 @@ use App\Models\Event;
 use App\Models\Task;
 use App\Service\ContactService;
 use App\Service\EventService;
+use App\Service\NoteService;
 use App\Service\TaskService;
 use App\Service\TimerService;
 
@@ -24,6 +25,7 @@ require APP.'Services/EventService.php';
 require APP.'Services/ContactService.php';
 require APP.'Services/TaskService.php';
 require APP.'Services/TimerService.php';
+require APP.'Services/NoteService.php';
 
 $userAuthService->isAuthenticated();
 
@@ -32,6 +34,7 @@ $eventService = new EventService($database, $user);
 $contactService = new ContactService($database, $user);
 $taskService = new TaskService($database, $user);
 $timerService = new TimerService($database, $user);
+$noteService = new NoteService($database, $user);
 
 header('Content-Type: application/json');
 
@@ -182,6 +185,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 showError($data);
             }
             break;
+        case 'task_update':
+            $data = array();
+            $validID = $validator->updateTask($data);
+            if ($validID) {
+                $task = new Task($data['id'], $data['name']);
+                if ($taskService->update($task)) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim aktualisieren.");
+                }
+            } else {
+                showError($data);
+            }
+            break;
         case 'task_delete':
             $data = array();
             $validID = $validator->validID($data);
@@ -214,6 +231,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 showError($data);
             }
+            break;
+        case 'stopwatch_update_text':
+            $data = array();
+            $validID = $validator->updateTextTimer($data);
+            if ($validID) {
+                echo json_encode($timerService->updateTextTimer($data['id'], $data['notiz']));
+            } else {
+                showError($data);
+            }
+            break;
+        case 'notes_fetch':
+            echo json_encode($noteService->all());
             break;
         default:
             http_response_code(404);

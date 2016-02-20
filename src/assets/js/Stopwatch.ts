@@ -45,7 +45,9 @@ export class StopWatch {
             })
             .done(timer => {
                 clearInterval(this.interval);
-                this.task.fetchTasks();
+                $('#stopWatchForm [name="notiz"]').val("");
+                $('#stopWatchForm [name="id"]').val(this.timerID);
+                $("#stopWatchModal").modal("show");
             })
             .fail(function () {
                 alert("Fehler beim stoppen des Timers!");
@@ -58,3 +60,4 @@ export class StopWatch {
         this.watch.text(this.currentTime);
     }
 }
+

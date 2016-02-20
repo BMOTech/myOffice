@@ -175,4 +175,20 @@ class Validator
 
         return $this->checkForErrors($arr);
     }
+
+    public function updateTask(&$arr)
+    {
+        $this->checkInt("id");
+        $this->checkString("name");
+
+        return $this->checkForErrors($arr);
+    }
+
+    public function updateTextTimer(&$arr)
+    {
+        $this->checkInt("id");
+        $this->checkString("notiz");
+
+        return $this->checkForErrors($arr);
+    }
 }

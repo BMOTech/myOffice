@@ -13,6 +13,7 @@ require APP . 'models/Event.php';
 require APP . 'models/Contact.php';
 require APP . 'models/Task.php';
 require APP . 'models/Timer.php';
+require APP . 'models/Note.php';
 require APP . 'services/UserService.php';
 require APP . 'services/UserAuthService.php';
 require APP . 'validator/Validator.php';

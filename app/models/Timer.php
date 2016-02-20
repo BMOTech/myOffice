@@ -6,12 +6,14 @@ class Timer
     protected $timerID;
     protected $start;
     protected $end;
+    protected $notiz;
 
-    public function __construct($timerID, $start, $end)
+    public function __construct($timerID, $start, $end, $notiz = null)
     {
         $this->timerID = $timerID;
         $this->start = $start;
         $this->end = $end;
+        $this->notiz = $notiz;
     }
 
     /**
@@ -28,6 +30,14 @@ class Timer
     public function getEnd()
     {
         return $this->end;
+    }
+
+    /**
+     * @return null
+     */
+    public function getNotiz()
+    {
+        return $this->notiz;
     }
 }
 

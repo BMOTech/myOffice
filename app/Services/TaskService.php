@@ -20,7 +20,7 @@ class TaskService
     public function all()
     {
         $this->_database->query(
-            "SELECT ta.taskID, ta.description, ta.userID, ti.timerID, ti.start, ti.end FROM (SELECT * FROM Tasks WHERE userID = :userID) as ta LEFT JOIN Timers ti ON ta.taskID = ti.taskID;"
+            "SELECT ta.taskID, ta.description, ta.userID, ti.timerID, ti.start, ti.end, ti.notiz FROM (SELECT * FROM Tasks WHERE userID = :userID) as ta LEFT JOIN Timers ti ON ta.taskID = ti.taskID;"
         );
         $this->_database->bind(':userID', $this->_user->getUserID());
         $this->_database->execute();
@@ -45,6 +45,7 @@ class TaskService
             }
             $currentItem['timers'][] = array("start" => $task['start'],
                                              "end"   => $task['end'],
+                                             "notiz" => $task['notiz'],
                                              "timerID" => $task['timerID']);
         }
 
@@ -70,6 +71,15 @@ class TaskService
         $this->_database->bind(':taskID', $taskID);
         $this->_database->bind(':userID', $this->_user->getUserID());
 
+        return $this->_database->execute();
+    }
+
+    public function update(Task $task) {
+        $this->_database->query(
+            "UPDATE Tasks SET description = :description WHERE taskID = :taskID"
+        );
+        $this->_database->bind(':description', $task->getDescription());
+        $this->_database->bind(':taskID', $task->getTaskID());
         return $this->_database->execute();
     }
 }
