@@ -186,7 +186,8 @@ $("#link_tasks").click(function () {
         });
 
         $("#content")
-            .on("click", "button[name='addEvent']", function () {
+            .on("click", "button[name='addEvent']", function (event) {
+                event.stopImmediatePropagation();
                 let text = $("#taskInput").val();
                 $.post("ajax.php", {
                         description: text,

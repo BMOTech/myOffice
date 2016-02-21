@@ -1,5 +1,6 @@
 /// <reference path="definitlytyped/jquery.d.ts" />
 /// <reference path="definitlytyped/jquery-ui.d.ts" />
+/// <reference path="definitlytyped/bootstrap.d.ts" />
 
 require("jquery-ui");
 
@@ -10,9 +11,7 @@ $.ajaxSetup({
 class Note {
     private noteID: number;
     private title: string;
-    private desc: string;
-    private col: number;
-    private row: number;
+    private descr: string;
     private note: JQuery;
 
     constructor(note: JQuery) {
@@ -22,70 +21,163 @@ class Note {
         this.note = note;
         this.noteID = parseInt(note.attr("data-id"), 10);
         this.title = note.children("div.panel-heading.portlet-header").text().trim();
-        this.desc = note.children("div.panel-body").text().trim();
+        this.descr = note.children("div.panel-body").text().trim();
     }
 
-    public showModal() {
+    public showModal(): void {
         $('#editNotizForm [name="id"]').val(this.noteID);
         $('#editNotizForm [name="heading"]').val(this.title);
-        $('#editNotizForm [name="text"]').val(this.desc);
+        $('#editNotizForm [name="text"]').val(this.descr);
         $("#editNotizModal").modal("show");
     }
+
+    public savePos(): void {
+        $.post("ajax.php", {
+                column: this.getColumn(),
+                id: this.noteID,
+                method: "notes_save_pos",
+                row: this.getRow(),
+            })
+            .fail(function () {
+                alert("Fehler beim speichern der Position!");
+            });
+    }
+
+    public getPrev() {
+        return this.note.prevAll();
+    }
+
+    public delete(callback) {
+        $.post("ajax.php", {
+                id: this.noteID,
+                method: "notes_delete",
+            })
+            .done(function () {
+                callback();
+            })
+            .fail(function () {
+                alert("Fehler beim löschen der Notiz!");
+            });
+    }
+
+    private getRow() {
+        return this.note.prevAll().length + 1;
+    }
+
+    private getColumn() {
+        return parseInt(this.note.closest(".ui-sortable").attr("id").replace("column-", ""), 10);
+    }
+
 }
 
 $("#link_notizen").click(function () {
 
     $("#content").load("templates/notizen.html", function () {
 
-        $.post("ajax.php", {
-                method: "notes_fetch"
-            })
-            .done(notes => {
-                notes.sort(function (a, b) {
-                    if (a.row < b.row)
-                        return -1;
-                    else if (a.row > b.row)
-                        return 1;
-                    else
-                        return 0;
-                });
-                $.each(notes, function (index, value) {
-                    let html = `
-                    <div class="panel panel-warning portlet" data-id="1">
+        let displayNote = function (value) {
+            if (value.descr === null) {
+                value.descr = "";
+            }
+            let html = `
+                    <div class="panel panel-warning portlet" data-id=${value.noteID}>
                         <div class="panel-heading portlet-header">
+                            <button type="button" class="close" name="delete"><span>&times;</span></button>
                             ${value.title}
                         </div>
                         <div class="panel-body">
-                            ${value.desc}
+                            ${value.descr}
                         </div>
                     </div>
                     `;
-                    $("#column-" + value.col).append(html);
-                });
+            $("#column-" + value.col).append(html);
+        };
 
-                $(".col-md-4").sortable({
-                    connectWith: ".col-md-4",
-                    items: ".portlet",
-                    placeholder: "sortable-placeholder",
-                    start: function (e, ui) {
-                        ui.placeholder.height(ui.helper.outerHeight());
-                    },
-                    stop: function (e, ui) {
-                        console.log(ui.item);
-                        let newNote = new Note(ui.item);
-                        console.log(newNote);
-                    }
+        let fetchNotes = function () {
+            $.post("ajax.php", {
+                    method: "notes_fetch"
+                })
+                .done(notes => {
+                    $(".ui-sortable").empty();
+                    notes.sort(function (a, b) {
+                        return a.row < b.row ? -1 : a.row > b.row ? 1 : 0;
+                    });
+                    $.each(notes, function (index, value) {
+                        displayNote(value);
+                    });
+
+                    $(".col-md-4").sortable({
+                        connectWith: ".col-md-4",
+                        handle: ".portlet-header",
+                        items: ".portlet",
+                        placeholder: "sortable-placeholder",
+                        start: function (e, ui) {
+                            ui.placeholder.height(ui.helper.outerHeight());
+                        },
+                        stop: function (e, ui) {
+                            let newNote = new Note(ui.item);
+                            newNote.savePos();
+                            $.each(newNote.getPrev(), function (key, value) {
+                                let prevNote = new Note($(value));
+                                prevNote.savePos();
+                            });
+                        },
+                    });
+                })
+                .fail(function () {
+                    alert("Fehler beim laden der Notizen!");
                 });
+        };
+
+        fetchNotes();
+
+        $(".notizen")
+            .on("click", ".panel-body", function () {
+                let note = $(this);
+                let newNote = new Note(note);
+                newNote.showModal();
             })
-            .fail(function () {
-                alert("Fehler beim laden der Notizen!");
+            .on("click", "button[name='addNote']", function (event) {
+                event.stopImmediatePropagation();
+                let text = $("#noteInput").val();
+                $.post("ajax.php", {
+                        method: "notes_save",
+                        title: text,
+                    })
+                    .done(function () {
+                        fetchNotes();
+                    })
+                    .fail(function () {
+                        alert("Fehler beim laden der Notizen!");
+                    });
+            })
+            .on("click", "button[name='delete']", function (event) {
+                let note = $(this);
+                let newNote = new Note(note);
+                newNote.delete(function () {
+                    fetchNotes();
+                });
             });
 
-        $('body').on('click', '.panel-body', function () {
-            let note = $(this);
-            console.log("test");
-            let newNote = new Note(note);
-            newNote.showModal();
+        $("#editNotizForm").validate({
+            debug: true,
+            rules: {
+                heading: {
+                    required: true
+                },
+                text: {
+                    required: false
+                },
+            },
+            submitHandler: function () {
+                $.post("ajax.php", $("#editNotizForm").serialize())
+                    .done(function () {
+                        fetchNotes();
+                        $("#editNotizModal").modal("hide");
+                    })
+                    .fail(function () {
+                        alert("Fehler beim speichern der Notiz!");
+                    });
+            },
         });
     });
 })

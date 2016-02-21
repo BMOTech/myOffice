@@ -191,4 +191,29 @@ class Validator
 
         return $this->checkForErrors($arr);
     }
+
+    public function saveNotePos(&$arr)
+    {
+        $this->checkInt("id");
+        $this->checkInt("column");
+        $this->checkInt("row");
+
+        return $this->checkForErrors($arr);
+    }
+
+    public function saveNote(&$arr)
+    {
+        $this->checkString("title");
+
+        return $this->checkForErrors($arr);
+    }
+
+    public function updateNote(&$arr)
+    {
+        $this->checkInt("id");
+        $this->checkString("heading");
+        $this->checkString("text");
+
+        return $this->checkForErrors($arr);
+    }
 }

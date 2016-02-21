@@ -1,15 +1,27 @@
-<div class="row sortable">
-    <div class="col-md-4" id="column-1">
-
+<div class="notizen">
+    <div class="form">
+        <div class="input-group">
+            <input id="noteInput" name="description" type="text" class="form-control">
+        <span class="input-group-btn">
+          <button name="addNote" class="btn btn-default" type="button">
+              <span class="glyphicon glyphicon-plus"></span> Notiz hinzufügen
+          </button>
+        </span>
+        </div>
     </div>
-    <div class="col-md-4 element" id="column-2">
+    <hr/>
+    <div class="row sortable">
+        <div class="col-md-4" id="column-1">
 
-    </div>
-    <div class="col-md-4 element" id="column-3">
+        </div>
+        <div class="col-md-4 element" id="column-2">
 
+        </div>
+        <div class="col-md-4 element" id="column-3">
+
+        </div>
     </div>
 </div>
-
 
 
 <div class="modal fade" id="editNotizModal" tabindex="-1">
@@ -30,11 +42,12 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-10">
-                            <textarea type="text" class="form-control" name="text" placeholder="Details der Notiz"></textarea>
+                            <textarea type="text" class="form-control" name="text"
+                                      placeholder="Details der Notiz"></textarea>
                         </div>
                     </div>
                     <input name="id" type="hidden"/>
-                    <input name="method" type="hidden" value="notiz_update"/>
+                    <input name="method" type="hidden" value="notes_update"/>
                 </form>
             </div>
             <div class="modal-footer">

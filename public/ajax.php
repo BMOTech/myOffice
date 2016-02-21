@@ -10,6 +10,7 @@
 
 use App\Models\Contact;
 use App\Models\Event;
+use App\Models\Note;
 use App\Models\Task;
 use App\Service\ContactService;
 use App\Service\EventService;
@@ -243,6 +244,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
         case 'notes_fetch':
             echo json_encode($noteService->all());
+            break;
+        case 'notes_save_pos':
+            $data = array();
+            $validID = $validator->saveNotePos($data);
+            if ($validID) {
+                if ($noteService->savePos($data['id'], $data['column'], $data['row'])) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim aktualisieren der Position.");
+                }
+            } else {
+                showError($data);
+            }
+            break;
+        case 'notes_save':
+            $data = array();
+            $validID = $validator->saveNote($data);
+            if ($validID) {
+                if ($noteService->save($data['title'])) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim speichern der Notiz.");
+                }
+            } else {
+                showError($data);
+            }
+            break;
+        case 'notes_update':
+            $data = array();
+            $validID = $validator->updateNote($data);
+            if ($validID) {
+                if ($noteService->update($data['id'], $data['heading'], $data['text'])) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim speichern der Notiz.");
+                }
+            } else {
+                showError($data);
+            }
+            break;
+        case 'notes_delete':
+            $data = array();
+            $validID = $validator->validID($data);
+            if ($validID) {
+                $id = $data['id'];
+                if ($noteService->delete($id)) {
+                    echo json_encode(array("message" => "success"));
+                } else {
+                    showError("Unbekannter Fehler beim löschen.");
+                }
+            } else {
+                showError($data);
+            }
             break;
         default:
             http_response_code(404);
