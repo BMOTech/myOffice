@@ -4,7 +4,7 @@
             myOffice
         </a>
         <ul class="nav navbar-nav">
-            <li><a><i class="fa fa-home"></i>&nbsp; Übersicht</a></li>
+            <li><a id="link_overview" href="#overview"><i class="fa fa-home"></i>&nbsp; Übersicht</a></li>
             <li><a id="link_notizen" href="#"><i class="fa fa-sticky-note"></i>&nbsp; Notizen</a></li>
             <li><a id="link_contacts" href="#"><i class="fa fa-user"></i>&nbsp; Kontakte</a></li>
             <li><a id="link_tasks" href="#"><i class="fa fa-book"></i>&nbsp; Aufgaben</a></li>

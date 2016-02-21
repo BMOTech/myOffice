@@ -82,4 +82,24 @@ class TaskService
         $this->_database->bind(':taskID', $task->getTaskID());
         return $this->_database->execute();
     }
+
+    public function last($limit)
+    {
+        $this->_database->query(
+            "SELECT *
+                FROM (
+                       SELECT *
+                       FROM Tasks
+                       WHERE userID = :userID
+                       ORDER BY taskID DESC
+                       LIMIT :limit
+                     ) tasks
+                ORDER BY taskID ASC"
+        );
+        $this->_database->bind(':userID', $this->_user->getUserID());
+        $this->_database->bind(':limit', $limit);
+        $this->_database->execute();
+
+        return $this->_database->resultset($this->_class);
+    }
 }

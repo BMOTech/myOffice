@@ -47,19 +47,6 @@ class Note {
         return this.note.prevAll();
     }
 
-    public delete(callback) {
-        $.post("ajax.php", {
-                id: this.noteID,
-                method: "notes_delete",
-            })
-            .done(function () {
-                callback();
-            })
-            .fail(function () {
-                alert("Fehler beim löschen der Notiz!");
-            });
-    }
-
     private getRow() {
         return this.note.prevAll().length + 1;
     }
@@ -81,7 +68,6 @@ $("#link_notizen").click(function () {
             let html = `
                     <div class="panel panel-warning portlet" data-id=${value.noteID}>
                         <div class="panel-heading portlet-header">
-                            <button type="button" class="close" name="delete"><span>&times;</span></button>
                             ${value.title}
                         </div>
                         <div class="panel-body">
@@ -150,13 +136,21 @@ $("#link_notizen").click(function () {
                         alert("Fehler beim laden der Notizen!");
                     });
             })
-            .on("click", "button[name='delete']", function (event) {
-                let note = $(this);
-                let newNote = new Note(note);
-                newNote.delete(function () {
+
+        $("#editNotizModal").on("click", "button[name='delete']", function (event) {
+            let id = $('#editNotizModal [name="id"]').val();
+            $.post("ajax.php", {
+                    id: id,
+                    method: "notes_delete",
+                })
+                .done(function () {
                     fetchNotes();
+                    $("#editNotizModal").modal("hide");
+                })
+                .fail(function () {
+                    alert("Fehler beim löschen der Notiz!");
                 });
-            });
+        });
 
         $("#editNotizForm").validate({
             debug: true,

@@ -219,7 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $validID = $validator->validID($data);
             if ($validID) {
                 $id = $data['id'];
-                echo json_encode(array("timerID" => $timerService->startTimer($id)));
+                echo json_encode(
+                    array("timerID" => $timerService->startTimer($id))
+                );
             } else {
                 showError($data);
             }
@@ -228,7 +230,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = array();
             $validID = $validator->stopTimer($data);
             if ($validID) {
-                echo json_encode($timerService->stopTimer($data['taskID'], $data['timerID']));
+                echo json_encode(
+                    $timerService->stopTimer($data['taskID'], $data['timerID'])
+                );
             } else {
                 showError($data);
             }
@@ -237,7 +241,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = array();
             $validID = $validator->updateTextTimer($data);
             if ($validID) {
-                echo json_encode($timerService->updateTextTimer($data['id'], $data['notiz']));
+                echo json_encode(
+                    $timerService->updateTextTimer($data['id'], $data['notiz'])
+                );
             } else {
                 showError($data);
             }
@@ -249,10 +255,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = array();
             $validID = $validator->saveNotePos($data);
             if ($validID) {
-                if ($noteService->savePos($data['id'], $data['column'], $data['row'])) {
+                if ($noteService->savePos(
+                    $data['id'], $data['column'], $data['row']
+                )
+                ) {
                     echo json_encode(array("message" => "success"));
                 } else {
-                    showError("Unbekannter Fehler beim aktualisieren der Position.");
+                    showError(
+                        "Unbekannter Fehler beim aktualisieren der Position."
+                    );
                 }
             } else {
                 showError($data);
@@ -275,7 +286,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = array();
             $validID = $validator->updateNote($data);
             if ($validID) {
-                if ($noteService->update($data['id'], $data['heading'], $data['text'])) {
+                if ($noteService->update(
+                    $data['id'], $data['heading'], $data['text']
+                )
+                ) {
                     echo json_encode(array("message" => "success"));
                 } else {
                     showError("Unbekannter Fehler beim speichern der Notiz.");
@@ -297,6 +311,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 showError($data);
             }
+            break;
+        case 'overview':
+            $output = array();
+            $tasks = $taskService->last(5);
+            $events = $eventService->last(5);
+            $notes = $noteService->last(5);
+            $contacts = $contactService->last(5);
+            array_push($output, $tasks, $events, $notes, $contacts);
+            echo json_encode($output);
             break;
         default:
             http_response_code(404);

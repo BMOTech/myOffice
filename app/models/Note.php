@@ -1,19 +1,19 @@
 <?php
 namespace App\Models;
 
-class Note
+class Note implements \JsonSerializable
 {
     protected $noteID;
     protected $title;
-    protected $desc;
+    protected $descr;
     protected $col;
     protected $row;
 
-    public function __construct($noteID, $title, $desc, $col, $row)
+    public function __construct($noteID = null, $title  = null, $descr  = null, $col  = null, $row  = null)
     {
         $this->noteID = $noteID;
         $this->title = $title;
-        $this->desc = $desc;
+        $this->descr = $descr;
         $this->col = $col;
         $this->row = $row;
     }
@@ -47,7 +47,7 @@ class Note
      */
     public function getDesc()
     {
-        return $this->desc;
+        return $this->descr;
     }
 
     /**
@@ -66,6 +66,21 @@ class Note
         return $this->row;
     }
 
-}
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @link  http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     *        which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'Notes' => [
+                'title' => $this->getTitle()
+            ]
+        ];
+    }}
 
 ?>

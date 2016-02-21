@@ -9,7 +9,7 @@ class EventService
 {
     private $_database;
     private $_user;
-    private $_eventClass = "App\Models\Event";
+    private $_class = "App\Models\Event";
 
     public function __construct(Database $database, User $user)
     {
@@ -59,5 +59,25 @@ class EventService
         $this->_database->bind(':eventID', $eventID);
         $this->_database->bind(':userID', $this->_user->getUserID());
         return $this->_database->execute();
+    }
+
+    public function last($limit)
+    {
+        $this->_database->query(
+            "SELECT *
+                FROM (
+                       SELECT *
+                       FROM Events
+                       WHERE userID = :userID AND start >= DATE(NOW())
+                       ORDER BY start ASC
+                       LIMIT :limit
+                     ) events
+                ORDER BY start ASC"
+        );
+        $this->_database->bind(':userID', $this->_user->getUserID());
+        $this->_database->bind(':limit', $limit);
+        $this->_database->execute();
+
+        return $this->_database->resultset($this->_class);
     }
 }

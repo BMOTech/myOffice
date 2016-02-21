@@ -83,4 +83,24 @@ class ContactService
 
         return $this->_database->single();
     }
+
+    public function last($limit)
+    {
+        $this->_database->query(
+            "SELECT *
+                FROM (
+                       SELECT *
+                       FROM Contacts
+                       WHERE userID = :userID
+                       ORDER BY contactID DESC
+                       LIMIT :limit
+                     ) contacts
+                ORDER BY contactID ASC"
+        );
+        $this->_database->bind(':userID', $this->_user->getUserID());
+        $this->_database->bind(':limit', $limit);
+        $this->_database->execute();
+
+        return $this->_database->resultset($this->_class);
+    }
 }

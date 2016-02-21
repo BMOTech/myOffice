@@ -5,7 +5,8 @@ var gulp = require('gulp'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     concat = require('gulp-concat'),
-    browserify = require('browserify');
+    browserify = require('browserify'),
+    uglify = require('gulp-uglify');
 
 // Copy
 gulp.task('copy', function() {
@@ -17,11 +18,17 @@ gulp.task('copy', function() {
         .pipe(gulp.dest('./public/css'));
 });
 
+
 // CSS
+var sassOptions = {
+    errLogToConsole: true,
+    outputStyle: 'compressed'
+};
+
 gulp.task('scss', function() {
     gulp.src('./src/assets/sass/style.scss')
         .pipe(sourcemaps.init())
-        .pipe(sass()).on('error', sass.logError)
+        .pipe(sass(sassOptions)).on('error', sass.logError)
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('./public/css'))
         .pipe(browserSync.reload({
@@ -29,27 +36,12 @@ gulp.task('scss', function() {
         }))
 });
 
-// JavaScript
-gulp.task('js', function() {
-    gulp.src([
-            './node_modules/jquery/dist/jquery.js',
-            './node_modules/bootstrap-sass/assets/javascripts/bootstrap.js',
-            './node_modules/moment/min/moment-with-locales.js',
-            './node_modules/fullcalendar/dist/fullcalendar.js',
-            './node_modules/fullcalendar/dist/lang/de.js'])
-        .pipe(sourcemaps.init())
-        .pipe(concat('libraries.js'))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('public/js'));
-});
-
 gulp.task('browserify', function() {
-    // Grabs the app.js file
     return browserify('src/assets/js/app.js')
-    // bundles it and creates a file called main.js
         .bundle()
         .pipe(source('main.js'))
-        // saves it the public/js/ directory
+        .pipe(buffer()) // <----- convert from streaming to buffered vinyl file object
+        .pipe(uglify()) // now gulp-uglify works
         .pipe(gulp.dest('public/js/'));
 })
 
@@ -62,13 +54,14 @@ gulp.task('browserSync', function() {
     })
 });
 
+
 // Rerun the task when a file changes
-gulp.task('watch', ['browserSync', 'scss', 'js'], function(){
+gulp.task('watch', ['browserSync', 'scss'], function(){
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
-    gulp.watch('src/assets/js/**/*.*', ['js', 'browserify']);
+    gulp.watch('src/assets/js/**/*.*', ['browserify']);
     gulp.watch(['public/*.php','public/templates/*.html', 'app/**/*.php'], browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
 
 // Default task
-gulp.task('default', ['scss', 'copy', 'js', 'browserify']);
+gulp.task('default', ['scss', 'copy', 'browserify']);

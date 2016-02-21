@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class Contact
+class Contact implements \JsonSerializable
 {
     protected $id;
     protected $vorname;
@@ -11,8 +11,8 @@ class Contact
     protected $telefon;
     protected $notizen;
 
-    public function __construct($contactID, $vorname, $nachname, $firma, $email,
-        $telefon, $notizen
+    public function __construct($contactID = null, $vorname = null, $nachname = null, $firma = null, $email = null,
+        $telefon = null, $notizen = null
     ) {
         $this->id = $contactID;
         $this->vorname = $vorname;
@@ -78,4 +78,21 @@ class Contact
     {
         return $this->notizen;
     }
-}
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @link  http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     *        which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'Contacts' => [
+                'vorname' => $this->getVorname(),
+                'nachname' => $this->getNachname()
+            ]
+        ];
+    }}
