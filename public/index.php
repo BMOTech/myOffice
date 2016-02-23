@@ -36,4 +36,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 $data['title'] = 'Login';
 $layout->show('login', $validator->getErrors(), $data);
-?>

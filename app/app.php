@@ -25,4 +25,3 @@ $validator = new Validator();
 $layout = new Layout();
 
 session_start();
-?>

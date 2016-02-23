@@ -27,4 +27,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 $data['title'] = "Interner Bereich";
 $layout->show('intern', $validator->getErrors(), $data);
-?>

@@ -8,24 +8,19 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     uglify = require('gulp-uglify');
 
-// Copy
-gulp.task('copy', function() {
+gulp.task('copy', function () {
     gulp.src('./node_modules/font-awesome/fonts/**.*')
         .pipe(gulp.dest('./public/fonts'));
     gulp.src('./node_modules/bootstrap-sass/assets/fonts/**/**.*')
         .pipe(gulp.dest('./public/fonts'));
-    gulp.src('./node_modules/fullcalendar/dist/fullcalendar.css')
-        .pipe(gulp.dest('./public/css'));
 });
 
-
-// CSS
 var sassOptions = {
     errLogToConsole: true,
     outputStyle: 'compressed'
 };
 
-gulp.task('scss', function() {
+gulp.task('scss', function () {
     gulp.src('./src/assets/sass/style.scss')
         .pipe(sourcemaps.init())
         .pipe(sass(sassOptions)).on('error', sass.logError)
@@ -36,17 +31,17 @@ gulp.task('scss', function() {
         }))
 });
 
-gulp.task('browserify', function() {
+gulp.task('browserify', function () {
     return browserify('src/assets/js/app.js')
         .bundle()
         .pipe(source('main.js'))
-        .pipe(buffer()) // <----- convert from streaming to buffered vinyl file object
-        .pipe(uglify()) // now gulp-uglify works
+        .pipe(buffer())
+        .pipe(uglify())
         .pipe(gulp.dest('public/js/'));
 })
 
 // BrowserSync
-gulp.task('browserSync', function() {
+gulp.task('browserSync', function () {
     browserSync({
         proxy: {
             target: "office.app"
@@ -54,14 +49,11 @@ gulp.task('browserSync', function() {
     })
 });
 
-
-// Rerun the task when a file changes
-gulp.task('watch', ['browserSync', 'scss'], function(){
+gulp.task('watch', ['browserSync', 'scss'], function () {
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
     gulp.watch('src/assets/js/**/*.*', ['browserify']);
-    gulp.watch(['public/*.php','public/templates/*.html', 'app/**/*.php'], browserSync.reload);
+    gulp.watch(['public/*.php', 'public/templates/*.html', 'app/**/*.php'], browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
 
-// Default task
 gulp.task('default', ['scss', 'copy', 'browserify']);
