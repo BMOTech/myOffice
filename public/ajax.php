@@ -10,7 +10,6 @@
 
 use App\Models\Contact;
 use App\Models\Event;
-use App\Models\Note;
 use App\Models\Task;
 use App\Service\ContactService;
 use App\Service\EventService;

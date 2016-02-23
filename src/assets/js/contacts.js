@@ -13,7 +13,7 @@ $('#link_contacts').click(function() {
                 .done(function(contact) {
                     $('#editContactModal [name="id"]').val(contact.contactID);
                     $('#editContactModal [name="vorname"]').val(contact.vorname);
-                    $('#editContactModal [name="nachname"]').val(contact.nachname);
+                    $('#editContactModal').find('[name="nachname"]').val(contact.nachname);
                     $('#editContactModal [name="firma"]').val(contact.firma);
                     $('#editContactModal [name="email"]').val(contact.email);
                     $('#editContactModal [name="telefon"]').val(contact.telefon);
@@ -23,7 +23,7 @@ $('#link_contacts').click(function() {
                 .fail(function() {
                     alert("Fehler beim laden des Kontakts!");
                 })
-        }
+        };
 
         window.showContactDetails = showContactDetails;
 
@@ -91,7 +91,7 @@ $('#link_contacts').click(function() {
                     id: id
                 })
                 .done(function() {
-                    fetchContacts()
+                    fetchContacts();
                     $('#editContactModal').modal('hide');
                 })
                 .fail(function() {
@@ -101,7 +101,7 @@ $('#link_contacts').click(function() {
 
         var resetForm = function() {
             $('#createContactForm').find("input[type=text], textarea").val("");
-        }
+        };
 
         function newRow(contact) {
             return '<tr onclick="showContactDetails(' + contact.contactID + ')"><td>' + contact.vorname + '</td><td>' + contact.nachname + '</td><td>' + contact.email + '</td><td>' + contact.telefon + '</td></tr>';
@@ -128,4 +128,4 @@ $('#link_contacts').click(function() {
 
         fetchContacts();
     });
-})
+});

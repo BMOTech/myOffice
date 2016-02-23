@@ -45,8 +45,6 @@ class UserAuthService
      * Beim Logout wird die Session zerstört und das gesetzte Cookie gelöscht.
      *
      * Anschließend wird der Benutzer zur Startseite geleitet.
-     *
-     * @param User $user
      */
     public function logout()
     {

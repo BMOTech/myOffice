@@ -16,7 +16,7 @@ define('APP', ROOT.'app'.DIRECTORY_SEPARATOR);
 require APP.'app.php';
 
 if (isset($_SESSION['login'])) {
-    UserService::redirect('intern.php');
+    UserService::redirect('/intern.php');
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

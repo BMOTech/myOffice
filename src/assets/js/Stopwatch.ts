@@ -56,7 +56,7 @@ export class StopWatch {
 
     private displayTime() {
         let time = moment(this.currentTime, "HH : mm : ss");
-        this.currentTime = time.add(1, "s").format("HH : mm : ss")
+        this.currentTime = time.add(1, "s").format("HH : mm : ss");
         this.watch.text(this.currentTime);
     }
 }

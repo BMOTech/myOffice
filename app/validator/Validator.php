@@ -2,7 +2,7 @@
 namespace Validator;
 
 use DateTime;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use Exception;
 
 class Validator
 {

@@ -51,7 +51,7 @@ $('#link_calendar').click(function() {
             }
         });
 
-        $('#editEventModal [name="delete"]').click(function() {
+        $('#editEventModal').find('[name="delete"]').click(function() {
             var id = $('#editEventModal [name="id"]').val();
 
             $.post('ajax.php', {
@@ -69,7 +69,7 @@ $('#link_calendar').click(function() {
 
         var resetForm = function() {
             $('#createEventForm').find("input[type=text], textarea").val("");
-        }
+        };
 
         $('#calendar').fullCalendar({
             editable: true,

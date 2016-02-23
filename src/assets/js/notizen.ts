@@ -135,7 +135,7 @@ $("#link_notizen").click(function () {
                     .fail(function () {
                         alert("Fehler beim laden der Notizen!");
                     });
-            })
+            });
 
         $("#editNotizModal").on("click", "button[name='delete']", function (event) {
             let id = $('#editNotizModal [name="id"]').val();
@@ -174,4 +174,4 @@ $("#link_notizen").click(function () {
             },
         });
     });
-})
+});

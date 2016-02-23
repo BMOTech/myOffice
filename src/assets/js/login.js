@@ -5,7 +5,7 @@ require('./validator/bootstrap-defaults');
 
 $(document).ready(function() {
     $("#loginForm").validate();
-})
+});
 
 $('#loginForm').validate({
     debug: true,

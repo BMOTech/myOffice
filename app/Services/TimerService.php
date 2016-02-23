@@ -1,8 +1,6 @@
 <?php
 namespace App\Service;
 
-use App\Models\Task;
-use App\Models\Timer;
 use App\Models\User;
 use Database\Database;
 

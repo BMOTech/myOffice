@@ -23,9 +23,12 @@
     </div>
 </div>
 
-<?php include APP.'/layout/sections/Error.php' ?>
-
 <div class="container">
+    <div id="error_container" class="alert alert-danger hidden" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <strong>Fehler:</strong>
+        <ul id="errors"></ul>
+    </div>
+
     <div id='content'>
         <p>Zuletzt eingeloggt am: <?php echo $_SESSION['lastLogin'] ?></p>
     </div>
