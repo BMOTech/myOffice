@@ -8,7 +8,7 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     uglify = require('gulp-uglify');
 
-gulp.task('copy', function () {
+gulp.task('copy', function() {
     gulp.src('./node_modules/font-awesome/fonts/**.*')
         .pipe(gulp.dest('./public/fonts'));
     gulp.src('./node_modules/bootstrap-sass/assets/fonts/**/**.*')
@@ -20,7 +20,7 @@ var sassOptions = {
     outputStyle: 'compressed'
 };
 
-gulp.task('scss', function () {
+gulp.task('scss', function() {
     gulp.src('./src/assets/sass/style.scss')
         .pipe(sourcemaps.init())
         .pipe(sass(sassOptions)).on('error', sass.logError)
@@ -31,7 +31,7 @@ gulp.task('scss', function () {
         }))
 });
 
-gulp.task('browserify', function () {
+gulp.task('browserify', function() {
     return browserify('src/assets/js/app.js')
         .bundle()
         .pipe(source('main.js'))
@@ -41,7 +41,7 @@ gulp.task('browserify', function () {
 })
 
 // BrowserSync
-gulp.task('browserSync', function () {
+gulp.task('browserSync', function() {
     browserSync({
         proxy: {
             target: "office.app"
@@ -49,7 +49,7 @@ gulp.task('browserSync', function () {
     })
 });
 
-gulp.task('watch', ['browserSync', 'scss'], function () {
+gulp.task('watch', ['browserSync', 'scss'], function() {
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
     gulp.watch('src/assets/js/**/*.*', ['browserify']);
     gulp.watch(['public/*.php', 'public/templates/*.html', 'app/**/*.php'], browserSync.reload);

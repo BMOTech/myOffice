@@ -4,11 +4,11 @@
             myOffice
         </a>
         <ul class="nav navbar-nav">
-            <li><a id="link_overview" href="#overview"><i class="fa fa-home"></i>&nbsp; Übersicht</a></li>
-            <li><a id="link_notizen" href="#"><i class="fa fa-sticky-note"></i>&nbsp; Notizen</a></li>
-            <li><a id="link_contacts" href="#"><i class="fa fa-user"></i>&nbsp; Kontakte</a></li>
-            <li><a id="link_tasks" href="#"><i class="fa fa-book"></i>&nbsp; Aufgaben</a></li>
-            <li><a id="link_calendar" href="#"><i class="fa fa-calendar"></i>&nbsp; Kalender</a></li>
+            <li><a href="#overview"><i class="fa fa-home"></i>&nbsp; Übersicht</a></li>
+            <li><a href="#notes"><i class="fa fa-sticky-note"></i>&nbsp; Notizen</a></li>
+            <li><a href="#contacts"><i class="fa fa-user"></i>&nbsp; Kontakte</a></li>
+            <li><a href="#tasks"><i class="fa fa-book"></i>&nbsp; Aufgaben</a></li>
+            <li><a href="#calendar"><i class="fa fa-calendar"></i>&nbsp; Kalender</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -29,7 +29,5 @@
         <ul id="errors"></ul>
     </div>
 
-    <div id='content'>
-        <p>Zuletzt eingeloggt am: <?php echo $_SESSION['lastLogin'] ?></p>
-    </div>
+    <div id='content'></div>
 </div>

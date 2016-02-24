@@ -8,7 +8,6 @@ require('./login');
 require('./register');
 require('./calendar');
 require('./contacts');
-require('./notizen');
+
 require('./Task.js');
 require('./Overview');
-

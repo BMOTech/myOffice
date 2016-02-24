@@ -30,7 +30,9 @@
     "jquery-ui": "^1.10.5",
     "jquery-validation": "^1.14.0",
     "moment": "^2.11.1",
-    "underscore": "^1.8.3"
+    "ts-loader": "^0.8.1",
+    "underscore": "^1.8.3",
+    "webpack": "^1.12.14"
   },
   "devDependencies": {
     "browser-sync": "^2.11.0",

@@ -10,7 +10,7 @@ $("#link_overview").click(function () {
 
     $("#content").load("templates/ueberblick.html", function () {
         $.post("ajax.php", {
-                method: "overview",
+                method: "overview"
             })
             .done(overview => {
                 $.each(overview, function (key, value) {

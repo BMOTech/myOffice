@@ -43,10 +43,10 @@ header('Content-Type: application/json');
  */
 function showError($data)
 {
-    header('HTTP/1.1 500 Internal Server Booboo');
+    header('HTTP/1.1 500 Internal Server Error');
     header('Content-Type: application/json; charset=UTF-8');
     die(json_encode(
-        array('message' => 'error', 'errors' => json_encode($data))
+        array('message' => 'error', 'errors' => $data)
     ));
 }
 
@@ -317,7 +317,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $events = $eventService->last(5);
             $notes = $noteService->last(5);
             $contacts = $contactService->last(5);
-            array_push($output, $tasks, $events, $notes, $contacts);
+            $lastLogin = $userService->getLastLogin();
+            array_push($output, $tasks, $events, $notes, $contacts, $lastLogin);
             echo json_encode($output);
             break;
         default:
