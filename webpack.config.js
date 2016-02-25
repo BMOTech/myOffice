@@ -12,11 +12,12 @@ module.exports = {
         new webpack.ProvidePlugin({
             "$": "jquery",
             "jQuery": "jquery",
-            "window.jQuery": "jquery"
+            "window.jQuery": "jquery",
+            "Cookies": "js-cookie"
         }),
-    //new webpack.optimize.UglifyJsPlugin({
-    //    minimize: true
-    //})
+    new webpack.optimize.UglifyJsPlugin({
+        minimize: true
+    })
     ],
     module: {
         loaders: [

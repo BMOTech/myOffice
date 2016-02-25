@@ -2,6 +2,9 @@ import {IPages} from "./iPages";
 import {Error} from "./error";
 
 export class Notes implements IPages {
+    /**
+     * Fügt die Notizen in den sichtbaren Bereich ein.
+     */
     public show(): void {
         $("#content").load("templates/notizen.html", () => {
             this.fetch();
@@ -9,6 +12,9 @@ export class Notes implements IPages {
         });
     }
 
+    /**
+     * Lädt die Notizen vom Server.
+     */
     public fetch(): void {
         $.post("ajax.php", {
                 method: "notes_fetch"
@@ -87,6 +93,9 @@ class Note {
         this.descr = note.children("div.panel-body").text().trim();
     }
 
+    /**
+     * Lädt die zur Notiz gehörenden Formulardaten und zeigt das Bootstrap-Modal an.
+     */
     public showModal(): void {
         $('#editNotizForm [name="id"]').val(this.noteID);
         $('#editNotizForm [name="heading"]').val(this.title);
@@ -119,7 +128,6 @@ class Note {
     }
 
 }
-
 class EventHandler {
 
     constructor() {

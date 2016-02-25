@@ -31,10 +31,10 @@ class Validator
     {
         $this->checkString("vorname");
         $this->checkString("nachname");
-        $this->checkString("firma");
+        $this->checkString_allowEmpty("firma");
         $this->checkEmail();
-        $this->checkString("telefon");
-        $this->checkString("notizen");
+        $this->checkString_allowEmpty("telefon");
+        $this->checkString_allowEmpty("notizen");
 
         return $this->checkForErrors($arr);
     }
@@ -44,10 +44,10 @@ class Validator
         $this->checkInt("id");
         $this->checkString("vorname");
         $this->checkString("nachname");
-        $this->checkString("firma");
+        $this->checkString_allowEmpty("firma");
         $this->checkEmail();
-        $this->checkString("telefon");
-        $this->checkString("notizen");
+        $this->checkString_allowEmpty("telefon");
+        $this->checkString_allowEmpty("notizen");
 
         return $this->checkForErrors($arr);
     }
@@ -63,7 +63,7 @@ class Validator
     public function saveEvent(&$arr)
     {
         $this->checkString("title");
-        $this->checkString("text");
+        $this->checkString_allowEmpty("text");
         $this->checkDate("date");
 
         return $this->checkForErrors($arr);
@@ -73,7 +73,7 @@ class Validator
     {
         $this->checkInt("id");
         $this->checkString("title");
-        $this->checkString("text");
+        $this->checkString_allowEmpty("text");
         $this->checkDate("date");
 
         return $this->checkForErrors($arr);
@@ -90,6 +90,28 @@ class Validator
         }
     }
 
+    private function checkString_allowEmpty($string)
+    {
+        if(empty(filter_input(
+            INPUT_POST, $string, FILTER_SANITIZE_STRING
+        ))) {
+            $this->_data[$string] = filter_input(INPUT_POST, $string, FILTER_SANITIZE_STRING);
+        } else {
+            if (!($this->_data[$string] = filter_input(
+                INPUT_POST, $string, FILTER_SANITIZE_STRING
+            ))
+            ) {
+                $this->_errors[$string]
+                    = ucfirst($string).' ungültig!';
+            }
+
+            if ((($this->_data[$string] != filter_input(INPUT_POST, $string)))) {
+                $this->_errors[$string]
+                    = ucfirst($string).' ungültig!';
+            }
+        }
+    }
+
     private function checkString($string)
     {
         if (!($this->_data[$string] = filter_input(
@@ -99,6 +121,7 @@ class Validator
             $this->_errors[$string]
                 = ucfirst($string).' ungültig!';
         }
+
         if ((($this->_data[$string] != filter_input(INPUT_POST, $string)))) {
             $this->_errors[$string]
                 = ucfirst($string).' ungültig!';
@@ -187,7 +210,7 @@ class Validator
     public function updateTextTimer(&$arr)
     {
         $this->checkInt("id");
-        $this->checkString("notiz");
+        $this->checkString_allowEmpty("notiz");
 
         return $this->checkForErrors($arr);
     }
@@ -212,7 +235,7 @@ class Validator
     {
         $this->checkInt("id");
         $this->checkString("heading");
-        $this->checkString("text");
+        $this->checkString_allowEmpty("text");
 
         return $this->checkForErrors($arr);
     }

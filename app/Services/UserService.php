@@ -103,6 +103,14 @@ class UserService
         header("Location: $url");
     }
 
+    public function getLastLogin() {
+        return [
+            'lastLogin' => [
+                'date' => $_SESSION['lastLogin']
+                ]
+            ];
+    }
+
 }
 
 ?>

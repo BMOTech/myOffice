@@ -5,6 +5,7 @@ export class Contacts implements IPages {
     public show(): void {
         $("#content").load("templates/kontakte.html", () => {
             this.fetch();
+            new EventHandler();
         });
     }
 
@@ -16,7 +17,6 @@ export class Contacts implements IPages {
                 Error.hide();
                 this.clear();
                 this.showContacts(contacts);
-                new EventHandler();
             })
             .fail((error) => {
                 Error.show(error);

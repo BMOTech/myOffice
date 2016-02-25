@@ -51,9 +51,8 @@ gulp.task('browserSync', function() {
 
 gulp.task('watch', ['browserSync', 'scss'], function() {
     gulp.watch('src/assets/sass/**/*.scss', ['scss']);
-    gulp.watch('src/assets/js/**/*.*', ['browserify']);
     gulp.watch(['public/*.php', 'public/templates/*.html', 'app/**/*.php'], browserSync.reload);
     gulp.watch('public/js/*.js', browserSync.reload);
 });
 
-gulp.task('default', ['scss', 'copy', 'browserify']);
+gulp.task('default', ['scss', 'copy']);
