@@ -171,7 +171,6 @@ class EventHandler {
         });
 
         $("#editNotizForm").validate({
-            debug: true,
             rules: {
                 heading: {
                     required: true

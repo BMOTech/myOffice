@@ -3,7 +3,6 @@ import $ = require("jquery");
 require("bootstrap");
 require("jquery-ui");
 require("jquery-validation");
-import moment = require("moment");
 
 $.validator.setDefaults({
     errorClass: "help-block",
@@ -21,44 +20,45 @@ import {Overviews} from "./overview.ts";
 import {Contacts} from "./contacts.ts";
 import {Error} from "./error.ts";
 import {Tasks} from "./tasks";
+import {Calendar} from "./calendar";
 import "./register.ts";
 import "./login.ts";
-import {Calendar} from "./calendar";
 
-$.ajaxSetup({
-    cache: false
-});
+//$.ajaxSetup({
+//    cache: false
+//});
 
 let showPage = function (option: String): void {
-    let notes = new Notes();
-    let overview = new Overviews();
-    let contacts = new Contacts();
-    let tasks = new Tasks();
-    let calendar = new Calendar();
     switch (option) {
         case "notes":
+            let notes = new Notes();
             notes.show();
             break;
         case "overview":
+            let overview = new Overviews();
             overview.show();
             break;
         case "contacts":
+            let contacts = new Contacts();
             contacts.show();
             break;
         case "tasks":
+            let tasks = new Tasks();
             tasks.show();
             break;
         case "calendar":
+            let calendar = new Calendar();
             calendar.show();
             break;
         case "":
-            overview.show();
+            let def = new Overviews();
+            def.show();
             break;
         default:
             Error.showErrorPage();
             break;
     }
-}
+};
 
 $(() => {
     let windowLoc = $(location).attr("pathname");

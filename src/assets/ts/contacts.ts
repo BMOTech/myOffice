@@ -5,7 +5,6 @@ export class Contacts implements IPages {
     public show(): void {
         $("#content").load("templates/kontakte.html", () => {
             this.fetch();
-            new EventHandler();
         });
     }
 
@@ -17,6 +16,7 @@ export class Contacts implements IPages {
                 Error.hide();
                 this.clear();
                 this.showContacts(contacts);
+                new EventHandler();
             })
             .fail((error) => {
                 Error.show(error);
@@ -25,9 +25,8 @@ export class Contacts implements IPages {
 
     private showContacts(contacts): void {
         $.each(contacts, (key, contact: Contact) => {
-            console.log(contact);
             let c = new Contact(contact.contactID, contact.vorname, contact.nachname, contact.email, contact.telefon);
-            $("#contactTable tbody").append(this.addNewContact(c));
+            $("#contactTable").find("tbody").append(this.addNewContact(c));
         });
     };
 
@@ -44,7 +43,7 @@ export class Contacts implements IPages {
     };
 
     private clear() {
-        $("#contactTable tbody").empty();
+        $("#contactTable").find("tbody").empty();
     };
 }
 
@@ -87,7 +86,6 @@ class EventHandler {
         });
 
         $("#createContactForm").validate({
-            debug: true,
             rules: rules,
             submitHandler: () => {
                 $.post("ajax.php", $("#createContactForm").serialize())
@@ -103,7 +101,6 @@ class EventHandler {
         });
 
         $("#editContactForm").validate({
-            debug: true,
             rules: rules,
             submitHandler: function () {
                 $.post("ajax.php", $("#editContactForm").serialize())
@@ -118,8 +115,8 @@ class EventHandler {
             },
         });
 
-        $("#editContactModal").find('[name="delete"]').click(function () {
-            let id = $('#editContactModal [name="id"]').val();
+        $("#editContactModal").find('[name="delete"]').click(event => {
+            let id = $("#editContactModal").find('[name="id"]').val();
 
             $.post("ajax.php", {
                     id: id,
@@ -134,7 +131,7 @@ class EventHandler {
                 });
         });
 
-        $("tr").on("click", function () {
+        $("#contactTable").find("tr").on("click", function () {
             let id = $(this).attr("data-id");
             $.post("ajax.php", {
                     id: id,

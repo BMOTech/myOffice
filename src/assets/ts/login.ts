@@ -1,9 +1,7 @@
-import moment = require("moment");
-
 $(document).ready(function () {
     let lastSucLogin = Cookies.get("lastSucLogin");
     if (lastSucLogin) {
-        let lastLogin = moment(Cookies.get("lastSucLogin")).format("DD.MM.YYYY HH:mm:ss");
+        let lastLogin = moment(new Date(Cookies.get("lastSucLogin"))).format("DD.MM.YYYY");
         $("#loginForm").prepend(`
         <div class="alert alert-info" role="alert">Letzter erfolgreicher Login am ${lastLogin}</div>
         `);
@@ -13,7 +11,6 @@ $(document).ready(function () {
 
 
 $("#loginForm").validate({
-    debug: true,
     rules: {
         email: {
             email: true,
