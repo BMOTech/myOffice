@@ -3,7 +3,6 @@ import {Error} from "./error";
 
 require("fullcalendar");
 require("fullcalendar-de");
-import moment = require("moment");
 
 export class Calendar implements IPages {
     /**
@@ -55,7 +54,6 @@ export class Calendar implements IPages {
 class EventHandler {
     constructor() {
         $("#createEventForm").validate({
-            debug: true,
             rules: {
                 title: {
                     required: true
@@ -75,7 +73,6 @@ class EventHandler {
         });
 
         $("#editEventForm").validate({
-            debug: true,
             rules: {
                 title: {
                     required: true
@@ -94,7 +91,7 @@ class EventHandler {
         });
 
         $("#editEventModal").find('[name="delete"]').click(function () {
-            let id = $('#editEventModal [name="id"]').val();
+            let id = $('#editEventModal').find('[name="id"]').val();
 
             $.post("ajax.php", {
                     method: "cal_delete",

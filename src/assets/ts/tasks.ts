@@ -1,6 +1,5 @@
 import {IPages} from "./iPages";
 import {Error} from "./error";
-import moment = require("moment");
 import {StopWatch} from "./stopwatch";
 
 export class Tasks implements IPages {
@@ -174,7 +173,6 @@ class EventHandler {
             });
 
         $("#editTaskForm").validate({
-            debug: true,
             rules: {
                 name: {
                     required: true
@@ -210,7 +208,6 @@ class EventHandler {
             });
 
         $("#stopWatchForm").validate({
-            debug: true,
             rules: {
                 notiz: {
                     required: false

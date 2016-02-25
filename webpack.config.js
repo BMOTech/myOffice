@@ -13,7 +13,8 @@ module.exports = {
             "$": "jquery",
             "jQuery": "jquery",
             "window.jQuery": "jquery",
-            "Cookies": "js-cookie"
+            "Cookies": "js-cookie",
+            "moment": "moment"
         }),
     new webpack.optimize.UglifyJsPlugin({
         minimize: true

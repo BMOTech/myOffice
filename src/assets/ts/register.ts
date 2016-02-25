@@ -3,7 +3,6 @@ $(document).ready(function() {
 });
 
 $('#registerForm').validate({
-    debug: true,
     rules: {
         vorname: {
             required: true

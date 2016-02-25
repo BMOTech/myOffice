@@ -1,6 +1,5 @@
 import {IPages} from "./iPages";
 import {Error} from "./error";
-import moment = require("moment");
 
 export class Overviews implements IPages {
     /**
@@ -12,9 +11,7 @@ export class Overviews implements IPages {
             })
             .done(overview => {
                 $.each(overview, (key, overviewItem) => {
-                    console.log(overviewItem);
                     $.each(overviewItem, (key2, item) => {
-                        console.log(item);
                         switch (Object.getOwnPropertyNames(item)[0]) {
                             case "Events":
                                 this.appendEvents(item);
@@ -57,9 +54,13 @@ export class Overviews implements IPages {
      * @param item
      */
     private appendDate(item) {
-        let lastLoginFormatted = moment(item.date, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY HH:mm:ss");
-        let lastlogin = `Letzter erfolgreicher Login am ${lastLoginFormatted}.`;
-        $("#lastLogin").text(lastlogin);
+        if (item.date) {
+            let lastLoginFormatted = moment(item.date, "YYYY-MM-DD HH:mm:ss").format("DD.MM.YY HH:mm:ss");
+            let lastlogin = `Letzter erfolgreicher Login am ${lastLoginFormatted}.`;
+            $("#lastLogin").text(lastlogin);
+        } else {
+            $("#lastLogin").remove();
+        }
     };
 
     /**

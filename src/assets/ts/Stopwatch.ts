@@ -1,5 +1,4 @@
 import {Tasks} from "./tasks";
-import moment = require("moment");
 import {Error} from "./error";
 
 export class StopWatch {
